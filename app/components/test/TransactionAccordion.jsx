@@ -22,6 +22,7 @@ import TimeAgoComponent from "../TimeAgoComponent";
 import { useAccount } from "wagmi";
 import { toast } from "react-toastify";
 import SingleTranscationAccordianExpanded from "../SingleTranscationAccordianExpanded";
+import { approveToken } from "@/app/quickaccess/ApproveTokens";
 
 const CustomAccordion = styled(Accordion)({
   margin: "10px 0",
