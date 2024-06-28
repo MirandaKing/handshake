@@ -473,6 +473,24 @@ const TransactionAccordion = ({ transactions }) => {
             </CustomAccordionDetails>
           </CustomAccordion>
         ))}
+
+      {transactions.length === 0 && (
+        <CustomAccordion key={"0"} classes={"muiTopContainer"}>
+          <CustomAccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls={`panel0-content`}
+            id={`panel0-header`}
+          >
+            <div style={{ textAlign: "center", width: "100%" }}>
+              No transactions found for this address.
+              <div style={{ marginTop: "10px" }}>
+                To start a new request, please click on the "Initiate Request"
+                button located in the top right corner.
+              </div>
+            </div>
+          </CustomAccordionSummary>
+        </CustomAccordion>
+      )}
     </div>
   );
 };

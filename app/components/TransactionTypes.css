@@ -177,7 +177,7 @@
 .container-parent {
   /* width: 90%; */
   margin: 0px auto;
-  padding-top: 100px;
+  padding-top: 30px;
   font-family: var(--font-dmsans);
 }
 .custom-container {
