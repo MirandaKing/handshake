@@ -22,15 +22,16 @@ export default function SectionOne() {
           aria-label="Global"
         >
           <div className="flex lg:flex-1">
-            <a href="#" className="-m-1.5 p-1.5">
+            <a href="#" className="-m-1.5 p-1.5 flex items-center">
               <span className="sr-only">HandShake Protocol</span>
               <Image
                 className="h-8 w-auto"
-                src="/img/handshake_logo.png"
+                src="/handshake.png"
                 alt="logo"
-                width={140}
-                height={50}
+                width={35}
+                height={35}
               />
+              <span className="logoText">Handshake</span>
             </a>
           </div>
           <div className="flex lg:hidden">
