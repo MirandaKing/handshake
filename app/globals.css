@@ -86,3 +86,16 @@ body {
   background-color: #f4f4f4;
   min-height: 100vh;
 }
+
+.logoImage {
+  width: 35px;
+  height: 35px;
+}
+.logoText {
+  font-family: var(--font-dmsans);
+  color: black;
+  margin-left: 10px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  /* text-transform: uppercase; */
+}

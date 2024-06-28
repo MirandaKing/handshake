@@ -12,14 +12,14 @@ export default function Nav() {
   };
   return (
     <>
-      <li className="js-nav-dropdown group relative">
+      <li className=" group relative">
         <Link
           href="/"
           className={`flex items-center justify-between py-3.5 font-display text-base  ${
             "/".split("/")[1] == pathname.split("/")[1]
-              ? "text-accent dark:text-accent"
-              : "text-jacarta-700 dark:text-white"
-          }  hover:text-accent focus:text-accent dark:hover:text-accent dark:focus:text-accent lg:px-5`}
+              ? "text-accent"
+              : "text-jacarta-700"
+          }  hover:text-accent focus:text-accent dark:hover:text-accent dark:focus:text-accent lg:px-5 text-black`}
         >
           Home
         </Link>
@@ -29,8 +29,8 @@ export default function Nav() {
           href="/dashboard"
           className={`flex items-center justify-between py-3.5 font-display text-base  ${
             "/create".split("/")[1] == pathname.split("/")[1]
-              ? "text-accent dark:text-accent"
-              : "text-jacarta-700 dark:text-white"
+              ? "text-accent"
+              : "text-jacarta-700 "
           }  hover:text-accent focus:text-accent dark:hover:text-accent dark:focus:text-accent lg:px-5`}
         >
           Dashboard

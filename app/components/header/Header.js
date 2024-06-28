@@ -40,16 +40,17 @@ export default function Header() {
           scrolled ? "js-page-header--is-sticky" : ""
         }`}
       >
-        <div className="flex items-center px-1 py-2 xl:px-4 border-b border-[#dcdee0] shadow-lg">
+        <div className="flex items-center px-2 py-2 xl:px-4 border-b border-[#dcdee0] shadow-lg">
           <Link href="/" className="shrink-0">
             <div className="flex items-center">
               <Image
-                width={140}
-                height={50}
-                src="/img/handshake_logo.png"
-                className="dark:block"
+                width={35}
+                height={35}
+                src="/handshake.png"
+                className="logoImage"
                 alt=""
-              />
+              />{" "}
+              <span className="logoText">Handshake</span>
             </div>
           </Link>
 
@@ -94,7 +95,7 @@ export default function Header() {
             </div>
 
             <nav className="navbar w-full">
-              <ul className="flex flex-col lg:flex-row">
+              <ul className="flex flex-col lg:flex-row text-black">
                 <Nav />
               </ul>
             </nav>
