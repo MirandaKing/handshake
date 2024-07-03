@@ -20,7 +20,8 @@ import {
 } from "viem";
 import TimeAgoComponent from "../TimeAgoComponent";
 import { useAccount } from "wagmi";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+
 import SingleTranscationAccordianExpanded from "../SingleTranscationAccordianExpanded";
 import { approveToken } from "@/app/quickaccess/ApproveTokens";
 
@@ -180,6 +181,10 @@ const TransactionAccordion = ({ transactions }) => {
           // console.log(response.message);
           setIsLoading(false);
           toast.success("Signed Sucessfully");
+
+          await new Promise((resolve) => setTimeout(resolve, 3000));
+
+          window.location.reload();
         } catch (error) {
           console.error("Error signing transaction:", error);
           setIsLoading(false);
@@ -221,6 +226,9 @@ const TransactionAccordion = ({ transactions }) => {
 
       setIsLoading(false);
       toast.success("Rejected Sucessfully");
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+
+      window.location.reload();
     } catch (error) {
       console.error("Error Rejecting transaction:", error);
       setIsLoading(false);
@@ -311,6 +319,9 @@ const TransactionAccordion = ({ transactions }) => {
           // throw error;
         }
         toast.success("Execution sucessfull");
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+
+        window.location.reload();
       }
       setIsLoading(false);
     } catch (error) {
@@ -480,7 +491,7 @@ const TransactionAccordion = ({ transactions }) => {
             </CustomAccordionDetails>
           </CustomAccordion>
         ))}
-
+      <ToastContainer />
       {transactions.length === 0 && (
         <CustomAccordion key={"0"} classes={"muiTopContainer"}>
           <CustomAccordionSummary

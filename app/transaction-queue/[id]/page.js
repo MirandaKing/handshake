@@ -94,6 +94,7 @@ export default function TransactionRequestDetails({ params }) {
       } else {
         throw new Error("Transaction hash is undefined");
       }
+      console.log(execute);
       if (execute) {
         const userData = {
           TransactionId: transaction.TransactionId, // This should be passed in the request to identify the transaction to update

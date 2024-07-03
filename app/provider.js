@@ -21,8 +21,10 @@ import {
   sepolia,
   bitTorrentTestnet,
 } from "wagmi/chains";
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
+import { useEffect } from "react";
 
 const { wallets } = getDefaultWallets();
 
