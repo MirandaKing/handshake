@@ -21,7 +21,7 @@ const AddressWithCopy = ({ address, short }) => {
 
   return (
     <div className="flex items-center">
-      <span className="mr-2">{truncatedAddress}</span>
+      <span className="mr-2 break-words">{truncatedAddress}</span>
       {isCopied ? (
         <FiCheck className="text-green-500" />
       ) : (

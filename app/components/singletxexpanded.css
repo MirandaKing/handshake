@@ -3,6 +3,12 @@
   flex-direction: row;
   justify-content: space-evenly;
 }
+
+@media (max-width: 768px) {
+  .expanded-single-tx-parent {
+    flex-direction: column;
+  }
+}
 .expanded-single-tx-parent .left {
   flex: 1;
   border-right: 1px solid #dcdee0;

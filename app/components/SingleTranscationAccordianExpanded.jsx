@@ -54,7 +54,7 @@ function SingleTranscationAccordianExpanded({
                   <div className="table-user-details">
                     <AddressWithCopy
                       address={transaction.receiverAddress}
-                      short={false}
+                      short={true}
                     />
                   </div>
                 </div>

@@ -353,7 +353,7 @@ const TransactionAccordion = ({ transactions }) => {
               <Grid
                 container
                 spacing={{ xs: 2, md: 3 }}
-                columns={{ xs: 12, sm: 10, md: 10 }}
+                columns={{ xs: 6, sm: 10, md: 10 }}
               >
                 <CustomGridItem item xs={2} sm={1} md={1}>
                   <div>{transaction.nonce}</div>
