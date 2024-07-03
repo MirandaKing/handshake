@@ -71,7 +71,15 @@ function SingleTranscationAccordianExpanded({
               </div>
               <div className="values">
                 <div className="value">{transaction.nonce}</div>
-                <div className="value">txHash</div>
+                <div className="value">
+                  <a
+                    href={`https://bttcscan.com/tx/${transaction.txHash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    txHash
+                  </a>
+                </div>
                 <div className="value">{transaction.initiateDate}</div>
                 <div className="value">{transaction.status}</div>
                 <div className="value">

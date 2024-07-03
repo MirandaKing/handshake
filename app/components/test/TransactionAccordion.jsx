@@ -275,15 +275,22 @@ const TransactionAccordion = ({ transactions }) => {
         gasLimit: 3000000, // Specify the gas limit here
       });
 
-      const execute = await walletClient.writeContract(request);
       const currentDate = new Date();
+      const execute = await walletClient.writeContract(request);
 
+      if (execute) {
+        await publicClient.waitForTransactionReceipt({ hash: execute });
+      } else {
+        throw new Error("Transaction hash is undefined");
+      }
       if (execute) {
         const userData = {
           TransactionId: transaction.TransactionId, // This should be passed in the request to identify the transaction to update
           status: "completed",
           transectionDate: currentDate,
+          transactionHash: execute,
         };
+
         console.log(userData);
         try {
           console.log("entered into try block");
