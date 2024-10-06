@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { styled } from "@mui/material/styles";
 import infoImg from "../../public/info.png";
@@ -5,8 +7,8 @@ import Image from "next/image";
 const MarqueeContainer = styled("div")({
   width: "100%",
   overflow: "hidden",
-  backgroundColor: "black",
-  color: "white",
+  backgroundColor: "#29FF81",
+  color: "black",
   whiteSpace: "nowrap",
   marginTop: "80px",
 });

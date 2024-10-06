@@ -13,7 +13,7 @@ export default function Nav() {
   return (
     <>
       <li className="group  relative hidden md:block ">
-        <Link
+        {/* <Link
           href="/"
           className={`flex items-center justify-between py-3.5 font-display text-base  ${
             "/".split("/")[1] == pathname.split("/")[1]
@@ -22,7 +22,7 @@ export default function Nav() {
           }  hover:text-accent focus:text-accent dark:hover:text-accent dark:focus:text-accent lg:px-5 text-black`}
         >
           Home
-        </Link>
+        </Link> */}
       </li>
       <li className="group hidden md:block">
         <Link

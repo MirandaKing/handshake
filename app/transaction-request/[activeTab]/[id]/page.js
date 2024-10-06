@@ -54,7 +54,7 @@ export default function TransactionRequestDetails({ params }) {
         transaction.amount,
         transaction.tokenAddress !== ""
           ? transaction.tokenAddress
-          : "0xeD14905ddb05D6bD36De98aCAa8D7AaF01851E5A",
+          : `${process.env.NEXT_PUBLIC_TESTNET_CONTRACT_ADDRESS}`,
         transaction.tokenName,
       ];
 
@@ -73,7 +73,7 @@ export default function TransactionRequestDetails({ params }) {
 
       const { request } = await publicClient.simulateContract({
         account: address,
-        address: "0xeD14905ddb05D6bD36De98aCAa8D7AaF01851E5A",
+        address: `${process.env.NEXT_PUBLIC_TESTNET_CONTRACT_ADDRESS}`,
         abi: handshakeABI,
         functionName: functionCalled,
         args: [
@@ -145,7 +145,7 @@ export default function TransactionRequestDetails({ params }) {
           name: "HandshakeTokenTransfer",
           version: "1",
           chainId: "1029",
-          verifyingContract: "0xeD14905ddb05D6bD36De98aCAa8D7AaF01851E5A",
+          verifyingContract: `${process.env.NEXT_PUBLIC_TESTNET_CONTRACT_ADDRESS}`,
         },
         types: {
           EIP712Domain: [

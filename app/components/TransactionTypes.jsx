@@ -8,6 +8,8 @@ import Queue from "./Types/Queue";
 import Received from "./Types/Received";
 import History from "./Types/History";
 import InitiateTransaction from "./Modal/InitiateTransaction";
+import Link from "next/link";
+import { Send } from "lucide-react";
 
 const TransactionTypes = () => {
   const { address } = useAccount();
@@ -94,9 +96,13 @@ const TransactionTypes = () => {
         <div className="container-parent">
           <div className="flex items-center justify-between pb-[24px] px-[24px]">
             <h1 className="reqheader2">Transaction Requests</h1>
-            <button className="initiateBtn button-50" onClick={openModal}>
-              Initiate Request
-            </button>
+            <Link
+              href="/send-request"
+              className="bg-[#29FF81] text-black font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center"
+            >
+              <Send className="w-5 h-5 text-black" />
+              <span className="ml-2">Send Token / NFT</span>
+            </Link>
           </div>
 
           <div className="table-tabs w-full border-b border-[#dcdee0] px-[24px] pt-[24px]">

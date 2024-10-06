@@ -8,12 +8,6 @@ import Link from "next/link";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 
-const concert_One = Concert_One({
-  weight: ["400"],
-  style: ["normal"],
-  subsets: ["latin"],
-  display: "swap",
-});
 export default function Header() {
   const { address, isConnected } = useAccount();
 

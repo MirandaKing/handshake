@@ -21,6 +21,7 @@ const publicClient = createPublicClient({
   },
   transport: http("https://pre-rpc.bittorrentchain.io/"), // Passing RPC URL to http function
 });
+
 const walletClient = createWalletClient({
   chain: {
     id: 1029, // BTTC Donau testnet chain ID
@@ -62,7 +63,7 @@ export default function TransactionRequestDetails({ params }) {
           name: "HandshakeTokenTransfer",
           version: "1",
           chainId: "1029",
-          verifyingContract: "0xeD14905ddb05D6bD36De98aCAa8D7AaF01851E5A",
+          verifyingContract: `${process.env.NEXT_PUBLIC_TESTNET_CONTRACT_ADDRESS}`,
         },
         types: {
           EIP712Domain: [

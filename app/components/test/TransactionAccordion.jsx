@@ -128,7 +128,7 @@ const TransactionAccordion = ({ transactions }) => {
           name: "HandshakeTokenTransfer",
           version: "1",
           chainId: "1029",
-          verifyingContract: "0xeD14905ddb05D6bD36De98aCAa8D7AaF01851E5A",
+          verifyingContract: `${process.env.NEXT_PUBLIC_TESTNET_CONTRACT_ADDRESS}`,
         },
         types: {
           EIP712Domain: [
@@ -240,7 +240,7 @@ const TransactionAccordion = ({ transactions }) => {
         transaction.amount,
         transaction.tokenAddress !== ""
           ? transaction.tokenAddress
-          : "0xeD14905ddb05D6bD36De98aCAa8D7AaF01851E5A",
+          : `${process.env.NEXT_PUBLIC_TESTNET_CONTRACT_ADDRESS}`,
         transaction.tokenName,
       ];
 
@@ -261,7 +261,7 @@ const TransactionAccordion = ({ transactions }) => {
 
       const { request } = await publicClient.simulateContract({
         account: address,
-        address: "0xeD14905ddb05D6bD36De98aCAa8D7AaF01851E5A",
+        address: `${process.env.NEXT_PUBLIC_TESTNET_CONTRACT_ADDRESS}`,
         abi: handshakeABI,
         functionName: functionCalled,
         args: [
@@ -356,7 +356,7 @@ const TransactionAccordion = ({ transactions }) => {
                 columns={{ xs: 6, sm: 10, md: 10 }}
               >
                 <CustomGridItem item xs={2} sm={1} md={1}>
-                  <div>{transaction.nonce}</div>
+                  <div>{transaction.TransactionId}</div>
                 </CustomGridItem>
                 <CustomGridItem item xs={2} sm={2} md={2}>
                   <div className="senderOrReceiverOnAccordian">
@@ -383,12 +383,16 @@ const TransactionAccordion = ({ transactions }) => {
                   </div>
                 </CustomGridItem>
                 <CustomGridItem item xs={2} sm={2} md={2}>
-                  <div style={{ fontWeight: "700" }}>
-                    {formatUnits(transaction.amount, transaction.decimals)}
-                    <span style={{ marginLeft: "10px" }}>
-                      {transaction.tokenName}
-                    </span>
-                  </div>
+                  {transaction.isNFT ? (
+                    <div style={{ fontWeight: "700" }}>NFT</div>
+                  ) : (
+                    <div style={{ fontWeight: "700" }}>
+                      {formatUnits(transaction.amount, transaction.decimals)}
+                      <span style={{ marginLeft: "10px" }}>
+                        {transaction.tokenName}
+                      </span>
+                    </div>
+                  )}
                 </CustomGridItem>
                 <CustomGridItem item xs={2} sm={2} md={2}>
                   <div style={{ color: "#a1a3a7" }}>

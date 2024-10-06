@@ -42,7 +42,7 @@ export const approveToken = async (amount, tokenContractAddress, address) => {
     address: tokenContractAddress,
     abi: erc20Abi.abi,
     functionName: "approve",
-    args: ["0xeD14905ddb05D6bD36De98aCAa8D7AaF01851E5A", amount],
+    args: [`${process.env.NEXT_PUBLIC_TESTNET_CONTRACT_ADDRESS}`, amount],
   });
 
   const execute = await walletClient.writeContract(request);
@@ -69,7 +69,7 @@ const readAllowance = async (tokenContractAddress, ownerAddress) => {
     address: tokenContractAddress,
     abi: erc20Abi.abi,
     functionName: "allowance",
-    args: [ownerAddress, "0xeD14905ddb05D6bD36De98aCAa8D7AaF01851E5A"],
+    args: [ownerAddress, `${process.env.NEXT_PUBLIC_TESTNET_CONTRACT_ADDRESS}`],
   });
 
   return result;

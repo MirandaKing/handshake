@@ -29,6 +29,20 @@ body {
   }
 }
 
+.section-hero {
+  background-color: #fff9f5;
+  background-image: url(https://cdn.prod.website-files.com/6232b6a…/623ac72…_bg-blur-heroo.png),
+    url("/public/img/dots.png");
+  background-position: 11vw, 50%;
+  background-repeat: no-repeat, no-repeat;
+  background-size: auto, auto;
+  background-attachment: scroll, scroll;
+  margin-top: -110px;
+  padding-top: 170px;
+  padding-bottom: 140px;
+  position: relative;
+}
+
 .initiateBtn {
   padding: 6px 1.5rem;
   color: white;
@@ -97,4 +111,18 @@ body {
   font-size: 1.2rem;
   font-weight: 700;
   /* text-transform: uppercase; */
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.33%);
+  }
+}
+
+.animate-marquee {
+  display: inline-block;
+  animation: marquee 30s linear infinite;
 }

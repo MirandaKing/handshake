@@ -215,13 +215,14 @@
   color: black;
   border-bottom: 2px solid black;
 }
-h3 {
+/* h3 {
   display: inline-block;
   position: relative;
   text-align: center;
   font-size: 1.5em;
   color: #cecece;
 }
+
 h3:before {
   content: "\25C0";
   position: absolute;
@@ -263,22 +264,23 @@ h3:after {
   100% {
     transform: translateX(0);
   }
-}
+} */
 
 .button-50 {
   appearance: button;
-  background-color: #000;
+  background-color: #29ff81;
   background-image: none;
-  border: 1px solid #000;
+  border: 1px solid #29ff81;
   border-radius: 4px;
   box-shadow: #fff 4px 4px 0 0, #000 4px 4px 0 1px;
   box-sizing: border-box;
-  color: #fff;
+  color: black;
+
   cursor: pointer;
   display: inline-block;
   font-family: var(--font-dmsans);
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 700;
   line-height: 20px;
   margin: 0 5px 10px 0;
   overflow: visible;

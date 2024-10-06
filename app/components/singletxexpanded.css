@@ -24,16 +24,16 @@
   flex-direction: column;
 }
 .expaned-left-top {
-  display: block;
+  /* display: block; */
   border-bottom: 1px solid #dcdee0;
   width: 100%;
 }
 .expaned-left-bottom {
-  width: 80%;
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  align-items: flex-start;
+  /* width: 80%;
+  display: flex; */
+  /* flex-direction: row; */
+  /* justify-content: flex-start;
+  align-items: flex-start; */
 }
 
 .lables,
