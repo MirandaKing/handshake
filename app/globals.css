@@ -100,10 +100,6 @@ body {
   min-height: 100vh;
 }
 
-.logoImage {
-  width: 35px;
-  height: 35px;
-}
 .logoText {
   font-family: var(--font-dmsans);
   color: black;

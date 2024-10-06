@@ -68,16 +68,16 @@ export default function LandingPage() {
       description:
         "Safeguard interactions with DeFi protocols by confirming the exact terms of token swaps or liquidity provisions.",
     },
-    {
-      title: "Cross-Chain Asset Transfers",
-      description:
-        "Facilitate secure cross-chain transfers of tokens and NFTs with mutual consent verification on both chains.",
-    },
-    {
-      title: "Corporate Treasury Management",
-      description:
-        "Implement additional security measures for managing and transferring corporate digital assets.",
-    },
+    // {
+    //   title: "Cross-Chain Asset Transfers",
+    //   description:
+    //     "Facilitate secure cross-chain transfers of tokens and NFTs with mutual consent verification on both chains.",
+    // },
+    // {
+    //   title: "Corporate Treasury Management",
+    //   description:
+    //     "Implement additional security measures for managing and transferring corporate digital assets.",
+    // },
     {
       title: "Escrow Services",
       description:
@@ -199,27 +199,27 @@ export default function LandingPage() {
         <main>
           <ScrollReveal>
             <div className="relative min-h-screen overflow-hidden">
-              <header className="sticky top-0 container mx-auto p-10 flex justify-between items-center z-20">
+              <header className="sticky top-0 container mx-auto p-5 md:p-10 flex gap-2 justify-between items-center z-20">
                 <Link
                   href="/"
-                  className="bg-white text-gray-800 font-bold py-3 px-8 rounded-lg transition-all duration-300 flex items-center border-2 border-gray-200 hover:border-gray-300 shadow-lg"
+                  className="bg-white text-gray-800 font-bold py-2 px-3 md:py-3 md:px-8 rounded-lg transition-all duration-300 flex items-center border-2 border-gray-200 hover:border-gray-300 shadow-lg"
                 >
                   <div className="flex items-center">
                     <Image
                       width={35}
                       height={35}
                       src="/handshake.png"
-                      className="logoImage "
+                      className="logoImage w-[20px] md:w-full h-[20px] md:h-full"
                       alt=""
                     />
-                    <span className="logoText md:text-1rem ld:text-[1.2rem]">
+                    <span className="font-dmsans font-bold ml-2 text-[0.865rem] md:text-[1.2rem] ld:text-[1.2rem]">
                       Handshake
                     </span>
                   </div>
                 </Link>
                 <Link
                   href="/dashboard"
-                  className="bg-[#29FF81] text-black font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center"
+                  className="bg-[#29FF81] text-[0.865rem] md:text-[1rem] text-black font-bold py-2 px-3 md:py-3 md:px-8 rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center"
                 >
                   <ArrowRight className="w-5 h-5 text-black" />
                   <span className="ml-2">Launch App</span>
@@ -245,12 +245,12 @@ export default function LandingPage() {
                   objectFit="cover"
                 />
               </div>
-              <section className="container mt-10 space-y-10 mx-auto p-20 text-center z-20 relative">
+              <section className="container mt-10 space-y-10 mx-auto p-14 md:p-20 text-center z-20 relative">
                 <motion.h2
-                  className="text-5xl md:text-7xl font-bold mb-6 max-w-3xl text-left text-gray-900 bg-clip-text text-black z-10"
+                  className="text-4xl md:text-7xl font-bold mb-6 max-w-3xl text-left text-gray-900 bg-clip-text text-black z-10"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8 }}
+                  transition={{ duration: 1 }}
                 >
                   Revolutionizing Token and NFT Transfers
                 </motion.h2>
@@ -258,7 +258,7 @@ export default function LandingPage() {
                   className="text-xl md:text-2xl mb-8 text-left text-gray-600 max-w-3xl"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.2 }}
+                  transition={{ duration: 1, delay: 0.3 }}
                 >
                   HandShake Protocol ensures secure, consensual transfers of
                   both fungible tokens and NFTs. Experience the future of
@@ -298,7 +298,10 @@ export default function LandingPage() {
                     className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: index * 0.1 }}
+                    transition={{
+                      duration: 1,
+                      staggerChildren: 0.5,
+                    }}
                     whileHover={{ scale: 1.05 }}
                   >
                     <IconWrapper>{feature.icon}</IconWrapper>
@@ -377,7 +380,7 @@ export default function LandingPage() {
               <h3 className="text-4xl font-bold mb-12 text-center text-[#29FF81]">
                 Use Cases
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
                 {useCases.map((useCase, index) => (
                   <motion.div
                     key={index}
@@ -394,6 +397,9 @@ export default function LandingPage() {
                   </motion.div>
                 ))}
               </div>
+              <h3 className="text-2xl font-bold my-12 text-center text-[#29FF81]">
+                & many more...
+              </h3>
             </section>
           </ScrollReveal>
 
