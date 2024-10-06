@@ -28,22 +28,24 @@ const MarqueeText = styled("div")({
 
 const Marquee = ({ message }) => (
   <MarqueeContainer>
-    <MarqueeText>
-      <Image
-        src="/image.png"
-        width={24}
-        height={24}
-        alt="Picture of the author"
-        style={{ marginRight: "10px" }}
-      />
-      This is a testnet site and if you want to initiate a tx on mainnet then go
-      to
-      <a
-        href="https://handshake-mainnet.vercel.app/dashboard"
-        style={{ textDecoration: "underline", marginLeft: "10px" }}
-      >
-        Handshake Mainnet Site
-      </a>
+    <MarqueeText className="flex items-center animate-marquee2 ">
+      <div className="flex items-center justify-end">
+        <Image
+          src="/image.png"
+          width={24}
+          height={24}
+          alt="Picture of the author"
+          style={{ marginRight: "10px" }}
+        />
+        This is a testnet site and if you want to initiate a tx on mainnet then
+        go to
+        <a
+          href="https://handshake-mainnet.vercel.app/dashboard"
+          style={{ textDecoration: "underline", marginLeft: "10px" }}
+        >
+          Handshake Mainnet Site
+        </a>
+      </div>
     </MarqueeText>
   </MarqueeContainer>
 );

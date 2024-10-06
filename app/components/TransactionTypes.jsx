@@ -94,7 +94,7 @@ const TransactionTypes = () => {
     <>
       <div>
         <div className="container-parent">
-          <div className="flex items-center justify-between pb-[24px] px-[24px]">
+          <div className="flex flex-col-reverse gap-6 md:gap-0 md:flex-row  items-center justify-between pb-0 md:pb-[24px] px-[24px]">
             <h1 className="reqheader2">Transaction Requests</h1>
             <Link
               href="/send-request"

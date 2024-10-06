@@ -11,7 +11,7 @@
 }
 .expanded-single-tx-parent .left {
   flex: 1;
-  border-right: 1px solid #dcdee0;
+  /* border-right: 1px solid #dcdee0; */
 }
 .expanded-single-tx-parent .right {
   min-width: 30%;
@@ -45,6 +45,9 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 10px;
+}
+.lables .lable {
+  text-align: left;
 }
 .values .value {
   font-weight: 600;

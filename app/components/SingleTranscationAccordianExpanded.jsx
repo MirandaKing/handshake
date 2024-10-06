@@ -5,6 +5,7 @@ import { formatUnits } from "viem";
 import AddressWithCopy from "../quickaccess/AddressWithCopy";
 import Blockies from "react-blockies";
 import { useAccount } from "wagmi";
+import { formatToHumanReadableDate } from "../utils/formatToHumanReadableDate";
 
 function SingleTranscationAccordianExpanded({
   transaction,
@@ -43,7 +44,7 @@ function SingleTranscationAccordianExpanded({
   return (
     <>
       <div className="expanded-single-tx-parent">
-        <div className="left">
+        <div className="left border-r-none md:border-r border-[#dcdee0]">
           <div className="left-child">
             <div className="expaned-left-top">
               <div
@@ -103,7 +104,11 @@ function SingleTranscationAccordianExpanded({
                     {transaction.isSponsored ? "Yes" : "No"}
                   </div>
                   <div className="value">txHash</div>
-                  <div className="value">{transaction.initiateDate}</div>
+                  <div className="value">
+                    {transaction?.initiateDate
+                      ? formatToHumanReadableDate(transaction.initiateDate)
+                      : ""}
+                  </div>
                   <div className="value">{transaction.status}</div>
                   <div className="value">
                     <div className="table-user">
@@ -173,7 +178,7 @@ function SingleTranscationAccordianExpanded({
             </div>
           </div>
         </div>
-        <div className="right">
+        <div className="right border-t md:border-none">
           <div className="process">
             <ul>
               <li

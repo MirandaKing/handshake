@@ -373,10 +373,10 @@ const TransactionAccordion = ({ transactions }) => {
                 spacing={{ xs: 2, md: 3 }}
                 columns={{ xs: 6, sm: 10, md: 10 }}
               >
-                <CustomGridItem item xs={2} sm={1} md={1}>
+                <CustomGridItem item xs={3} sm={1} md={1}>
                   <div>{transaction.TransactionId}</div>
                 </CustomGridItem>
-                <CustomGridItem item xs={2} sm={2} md={2}>
+                <CustomGridItem item xs={3} sm={2} md={2}>
                   <div className="senderOrReceiverOnAccordian">
                     <svg
                       width="16"
@@ -400,7 +400,7 @@ const TransactionAccordion = ({ transactions }) => {
                     {transaction.senderAddress === address ? "Send" : "Receive"}
                   </div>
                 </CustomGridItem>
-                <CustomGridItem item xs={2} sm={2} md={2}>
+                <CustomGridItem item xs={3} sm={2} md={2}>
                   {transaction.isNFT ? (
                     <div style={{ fontWeight: "700" }}>NFT</div>
                   ) : (
@@ -412,12 +412,12 @@ const TransactionAccordion = ({ transactions }) => {
                     </div>
                   )}
                 </CustomGridItem>
-                <CustomGridItem item xs={2} sm={2} md={2}>
+                <CustomGridItem item xs={3} sm={2} md={2}>
                   <div style={{ color: "#a1a3a7" }}>
                     <TimeAgoComponent timestamp={transaction.initiateDate} />
                   </div>
                 </CustomGridItem>
-                <CustomGridItem item xs={2} sm={1} md={1}>
+                <CustomGridItem item xs={3} sm={1} md={1}>
                   <div className="accordian-txn-status">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -438,7 +438,7 @@ const TransactionAccordion = ({ transactions }) => {
                       : "0 out of 3"}
                   </div>
                 </CustomGridItem>
-                <CustomGridItem item xs={2} sm={2} md={2}>
+                <CustomGridItem item xs={3} sm={2} md={2}>
                   <button
                     className={
                       address &&
