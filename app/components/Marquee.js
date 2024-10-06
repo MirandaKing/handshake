@@ -7,8 +7,10 @@ import Image from "next/image";
 const MarqueeContainer = styled("div")({
   width: "100%",
   overflow: "hidden",
-  backgroundColor: "#29FF81",
-  color: "black",
+  // backgroundColor: "#29FF81",
+  // color: "black",
+  backgroundColor: "black",
+  color: "white",
   whiteSpace: "nowrap",
   marginTop: "80px",
 });
