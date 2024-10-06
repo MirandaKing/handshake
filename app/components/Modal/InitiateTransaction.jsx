@@ -275,8 +275,15 @@ const InitiateTransaction = ({ onClose }) => {
             body: JSON.stringify(userData),
           });
           const response = await result.json();
+<<<<<<< HEAD
           toast.success("Token transfer initiated successfully!");
+=======
+          console.log("Signed Sucessfully");
+          toast.success("Signed Sucessfully");
+          await new Promise((resolve) => setTimeout(resolve, 3000));
+>>>>>>> 2bb6d555feec1ae11d27b74bafea5742abab26de
           setIsLoading(false);
+          window.location.reload();
           onClose();
           // console.log(response.message);
         } catch (error) {

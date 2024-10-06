@@ -20,7 +20,8 @@ import {
 } from "viem";
 import TimeAgoComponent from "../TimeAgoComponent";
 import { useAccount } from "wagmi";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+
 import SingleTranscationAccordianExpanded from "../SingleTranscationAccordianExpanded";
 import { approveToken } from "@/app/quickaccess/ApproveTokens";
 
@@ -180,6 +181,10 @@ const TransactionAccordion = ({ transactions }) => {
           // console.log(response.message);
           setIsLoading(false);
           toast.success("Signed Sucessfully");
+
+          await new Promise((resolve) => setTimeout(resolve, 3000));
+
+          window.location.reload();
         } catch (error) {
           console.error("Error signing transaction:", error);
           setIsLoading(false);
@@ -221,6 +226,9 @@ const TransactionAccordion = ({ transactions }) => {
 
       setIsLoading(false);
       toast.success("Rejected Sucessfully");
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+
+      window.location.reload();
     } catch (error) {
       console.error("Error Rejecting transaction:", error);
       setIsLoading(false);
@@ -275,15 +283,22 @@ const TransactionAccordion = ({ transactions }) => {
         gasLimit: 3000000, // Specify the gas limit here
       });
 
-      const execute = await walletClient.writeContract(request);
       const currentDate = new Date();
+      const execute = await walletClient.writeContract(request);
 
+      if (execute) {
+        await publicClient.waitForTransactionReceipt({ hash: execute });
+      } else {
+        throw new Error("Transaction hash is undefined");
+      }
       if (execute) {
         const userData = {
           TransactionId: transaction.TransactionId, // This should be passed in the request to identify the transaction to update
           status: "completed",
           transectionDate: currentDate,
+          transactionHash: execute,
         };
+
         console.log(userData);
         try {
           console.log("entered into try block");
@@ -304,6 +319,9 @@ const TransactionAccordion = ({ transactions }) => {
           // throw error;
         }
         toast.success("Execution sucessfull");
+        await new Promise((resolve) => setTimeout(resolve, 3000));
+
+        window.location.reload();
       }
       setIsLoading(false);
     } catch (error) {
@@ -477,7 +495,7 @@ const TransactionAccordion = ({ transactions }) => {
             </CustomAccordionDetails>
           </CustomAccordion>
         ))}
-
+      <ToastContainer />
       {transactions.length === 0 && (
         <CustomAccordion key={"0"} classes={"muiTopContainer"}>
           <CustomAccordionSummary

@@ -7,8 +7,10 @@ export async function PUT(req) {
     TransactionId, // This should be passed in the request to identify the transaction to update,
     status,
     transectionDate,
-    TransactionHash,
+    transactionHash,
   } = await req.json();
+
+  console.log("Hash", transactionHash);
 
   // Connect to MongoDB
   const client = await MongoClient.connect(process.env.NEXT_PUBLIC_MONGODB_URI);
@@ -23,7 +25,7 @@ export async function PUT(req) {
         $set: {
           status,
           transectionDate,
-          TransactionHash,
+          transactionHash,
         },
       }
     );
