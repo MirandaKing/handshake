@@ -4,12 +4,16 @@ import { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Image from "next/image";
-import { encodePacked, keccak256 } from "viem";
+import { createWalletClient, custom, encodePacked, getAddress, keccak256 } from "viem";
 import { formSchemaNFTTransfer } from "../Modal/schema";
 import { Send } from "lucide-react";
+import { getNftDetails } from "@/app/quickaccess/getTokenDetails";
+import { useAccount } from "wagmi";
+
 
 export default function SendNFT() {
-  const [transaction, setTransaction] = useState({ receiver: "", tokenId: "" });
+  const { address, isConnected } = useAccount();
+  const [transaction, setTransaction] = useState({ receiver: "",contractAddress:"", tokenId: "" });
   const [isSponsored, setIsSponsored] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingNFT, setIsLoadingNFT] = useState(false);
@@ -65,12 +69,20 @@ export default function SendNFT() {
   const loadNFTDetails = async () => {
     setIsLoadingNFT(true);
     setNftDetails(null);
+    console.log('whole tx',transaction)
     try {
+      const nftDetails = await getNftDetails(address, transaction.contractAddress, transaction.tokenId)
+      console.log("the details", nftDetails)
       const response = await fetch(
-        `https://api.jsonbin.io/v3/b/${transaction.tokenId}`
+        nftDetails.tokenUri
       );
       if (!response.ok) {
         throw new Error("Failed to fetch NFT details");
+      }
+      if (address != nftDetails.owner) {
+        console.log("You are not the owner of the TokenId")
+        throw new Error("You are not the owner of the TokenId");
+        
       }
       const data = await response.json();
       setNftDetails(data);
@@ -116,7 +128,8 @@ export default function SendNFT() {
     );
 
     console.log("nonce data:", packedData);
-    return keccak256(packedData);
+    // return keccak256(packedData);
+    // return 0x0000000000000000000000000000000000000000000000000000000000000001
   };
 
   const signTransaction = async (e) => {
@@ -134,15 +147,18 @@ export default function SendNFT() {
 
     const formData = {
       receiver: transaction.receiver,
+      receiver: transaction.contractAddress,
       tokenId: transaction.tokenId,
     };
+
+    console.log("formdata",formData)
 
     const { ethereum } = window;
     if (!ethereum) {
       throw new Error("Metamask is not installed, please install!");
     }
     // let amount = parseUnits(transaction.amount, tokenDetails.decimals);
-    console.log(transaction.amount);
+    
 
     try {
       formSchemaNFTTransfer.parse(formData);
@@ -165,9 +181,10 @@ export default function SendNFT() {
       // console.log(data);
 
       // let nonce = parseInt(data.nonce) + 1;
-      let nonce = await generateNonce();
+      // let nonce = await generateNonce();
+      let nonce = "0x0000000000000000000000000000000000000000000000000000000000000001";
       console.log("nonceeeeee", nonce);
-
+      const deadline = BigInt(Math.floor(Date.now() / 1000) + 604800);
       const signature = await client.signTypedData({
         account: address,
         domain: {
@@ -184,18 +201,22 @@ export default function SendNFT() {
             { name: "verifyingContract", type: "address" },
           ],
           initiateTransaction: [
-            { name: "nonce", type: "uint256" },
             { name: "sender", type: "address" },
             { name: "receiver", type: "address" },
-            { name: "tokenId", type: "string" },
+            { name: "tokenAddress", type: "address" },
+            { name: "tokenId", type: "uint256" },
+            { name: "deadline", type: "uint256" },
+            { name: "nonce", type: "bytes32" }
           ],
         },
         primaryType: "initiateTransaction",
         message: {
-          nonce: nonce,
           sender: address,
           receiver: transaction.receiver,
-          tokenId: tokenDetails.tokenId,
+          tokenAddress: getAddress(transaction.contractAddress),
+          tokenId: transaction.tokenId,
+          deadline: deadline,    
+          nonce: nonce,
         },
       });
       const currentDate = new Date();
@@ -204,8 +225,7 @@ export default function SendNFT() {
         const userData = {
           senderAddress: address,
           receiverAddress: transaction.receiver,
-          amount: "0",
-          tokenAddress: "",
+          tokenAddress: transaction.contractAddress,
           senderSignature: signature,
           receiverSignature: "",
           status: "inititated",
@@ -214,7 +234,7 @@ export default function SendNFT() {
           isSponsored: isSponsored ? true : false,
           tokenName: "",
           initiateDate: currentDate,
-          decimals: 18,
+          deadline: deadline.toString(),
           nonce: nonce,
         };
         console.log(userData);
@@ -227,7 +247,8 @@ export default function SendNFT() {
           const response = await result.json();
           toast.success("NFT transfer initiated successfully!");
           setIsLoading(false);
-          onClose();
+          // onClose();
+          console.log("api call done")
           // console.log(response.message);
         } catch (error) {
           toast.error("Error while signing");
@@ -249,7 +270,7 @@ export default function SendNFT() {
   };
 
   useEffect(() => {
-    if (transaction.receiver || transaction.tokenId) {
+    if (transaction.receiver || transaction.tokenId || transaction.contractAddress) {
       setErrors({});
       setErrorDisplay(false);
     }
@@ -258,7 +279,7 @@ export default function SendNFT() {
       setErrors({});
       setErrorDisplay(false);
     };
-  }, [transaction.receiver, transaction.tokenId]);
+  }, [transaction.receiver, transaction.tokenId, transaction.contractAddress]);
 
   return (
     <div className="p-2 md:p-8 md:pt-2">
@@ -284,6 +305,26 @@ export default function SendNFT() {
                 : "border-gray-300"
             }`}
             value={transaction.receiver}
+            onChange={handleInputChange}
+          />
+
+          <label
+            htmlFor="receiver"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Contract Address
+          </label>
+          <input
+            type="text"
+            id="contractAddress"
+            name="contractAddress"
+            placeholder="Enter Contract Address"
+            className={`w-full px-3 py-2 border rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-400 ${
+              errorDisplay && errors?.receiver
+                ? "border-red"
+                : "border-gray-300"
+            }`}
+            value={transaction.contractAddress}
             onChange={handleInputChange}
           />
           {errorDisplay && errors?.receiver && (

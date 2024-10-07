@@ -19,6 +19,7 @@ export async function POST(req) {
     approveDate,
     transectionDate,
     decimals,
+    deadline,
     nonce,
   } = await req.json();
 
@@ -58,6 +59,7 @@ export async function POST(req) {
       approveDate,
       transectionDate,
       decimals,
+      deadline,
       nonce,
     });
 
