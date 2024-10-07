@@ -151,7 +151,7 @@ const TransactionAccordion = ({ transactions }) => {
               { name: "tokenAddress", type: "address" },
               { name: "tokenId", type: "uint256" },
               { name: "deadline", type: "uint256" },
-              { name: "nonce", type: "uint256" },
+              { name: "nonce", type: "bytes32" },
             ],
           },
           primaryType: "signByReceiver",
