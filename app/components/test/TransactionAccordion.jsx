@@ -166,7 +166,7 @@ const TransactionAccordion = ({ transactions }) => {
         });
       } else {
         console.log("inside token");
-        // const amount = parseUnits(transaction.amount, transaction.decimals);    // cn1 change needed in API
+        const amount = parseUnits(transaction.amount, transaction.decimals); // cn1 change needed in API
         // amount can't be null but api passed it null because when data is null
 
         signature = await client.signTypedData({
@@ -185,20 +185,22 @@ const TransactionAccordion = ({ transactions }) => {
               { name: "verifyingContract", type: "address" },
             ],
             signByReceiver: [
-              { name: "nonce", type: "uint256" },
               { name: "sender", type: "address" },
               { name: "receiver", type: "address" },
+              { name: "tokenAddress", type: "address" },
               { name: "amount", type: "uint256" },
-              { name: "tokenName", type: "string" },
+              { name: "deadline", type: "uint256" },
+              { name: "nonce", type: "bytes32" },
             ],
           },
           primaryType: "signByReceiver",
           message: {
-            nonce: transaction.nonce,
             sender: transaction.senderAddress,
             receiver: transaction.receiverAddress,
-            amount: amount,
-            tokenName: transaction.tokenName,
+            tokenAddress: transaction.tokenAddress,
+            amount: transaction.amount,
+            deadline: transaction.deadline,
+            nonce: transaction.nonce,
           },
         });
       }
@@ -309,6 +311,7 @@ const TransactionAccordion = ({ transactions }) => {
         );
         console.log("NFT approved: ", approve);
       } else if (transaction.tokenAddress === "") {
+        console.log("in native accordion");
         // Native token transfer logic, no approval needed
         TransactionDetails = [
           transaction.senderAddress,
@@ -320,6 +323,7 @@ const TransactionAccordion = ({ transactions }) => {
         functionCalled = "transferNative"; // Call the native token transfer function
       } else {
         // ERC20 token transfer logic
+        console.log("in tokenAddress accordion");
         TransactionDetails = [
           transaction.senderAddress,
           transaction.receiverAddress,
@@ -330,6 +334,7 @@ const TransactionAccordion = ({ transactions }) => {
         ];
         functionCalled = "transferTokens"; // Call the token transfer function
 
+        console.log(TransactionDetails);
         // Handle ERC20 token approval
         let approve = await approveToken(
           transaction.amount,
@@ -350,6 +355,8 @@ const TransactionAccordion = ({ transactions }) => {
       ];
 
       console.log("cp1");
+      console.log(transaction, functionCalled);
+      console.log("--->", args);
       // Simulate the contract execution
       const { request } = await publicClient.simulateContract({
         account: address,
@@ -362,6 +369,8 @@ const TransactionAccordion = ({ transactions }) => {
           : {}),
         gasLimit: 3000000,
       });
+
+      console.log(request);
 
       // Execute the contract function
       const currentDate = new Date();

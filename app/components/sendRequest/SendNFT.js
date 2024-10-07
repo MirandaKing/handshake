@@ -181,8 +181,8 @@ export default function SendNFT() {
       // console.log(data);
 
       // let nonce = parseInt(data.nonce) + 1;
-      // let nonce = await generateNonce();
-      let nonce = "0x0000000000000000000000000000000000000000000000000000000000000001";
+      let nonce = await generateNonce();
+      // let nonce = "0x0000000000000000000000000000000000000000000000000000000000000001";
       console.log("nonceeeeee", nonce);
       const deadline = BigInt(Math.floor(Date.now() / 1000) + 604800);
       const signature = await client.signTypedData({

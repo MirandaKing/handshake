@@ -92,9 +92,9 @@ contract HandshakeTokenTransfer is EIP712 {
         nonZeroAddress(_transaction.receiver)
         nonceNotUsed(_transaction.sender, _transaction.nonce)
     {
-        bytes32 structHash = keccak256(
+        bytes32 senderStructHash = keccak256(
             abi.encode(
-                RECEIVER_TYPEHASH,
+                SENDER_TYPEHASH,
                 _transaction.sender,
                 _transaction.receiver,
                 _transaction.amount,
@@ -103,13 +103,13 @@ contract HandshakeTokenTransfer is EIP712 {
             )
         );
 
-        bytes32 hash = _hashTypedDataV4(structHash);
+        bytes32 senderHash = _hashTypedDataV4(senderStructHash);
         require(
-            ECDSA.recover(hash, senderSign) == _transaction.sender,
-            "Invalid signature of sender"
+            ECDSA.recover(senderHash, senderSign) == _transaction.sender,
+            "Handshake: Invalid signature of sender"
         );
 
-        bytes32 structHashReceiver = keccak256(
+        bytes32 receiverStructHash = keccak256(
             abi.encode(
                 RECEIVER_TYPEHASH,
                 _transaction.sender,
@@ -120,11 +120,11 @@ contract HandshakeTokenTransfer is EIP712 {
             )
         );
 
-        bytes32 receiverHash = _hashTypedDataV4(structHashReceiver);
+        bytes32 receiverHash = _hashTypedDataV4(receiverStructHash);
 
         require(
             ECDSA.recover(receiverHash, receiverSign) == _transaction.receiver,
-            "Invalid signature of receiver"
+            "Handshake: Invalid signature of receiver"
         );
 
         _authorizationStates[_transaction.sender][_transaction.nonce] = true;
@@ -143,7 +143,7 @@ contract HandshakeTokenTransfer is EIP712 {
         nonZeroAddress(_transaction.receiver)
         nonceNotUsed(_transaction.sender, _transaction.nonce)
     {
-        bytes32 structHash = keccak256(
+        bytes32 senderStructHash = keccak256(
             abi.encode(
                 SENDER_TYPEHASH,
                 _transaction.sender,
@@ -155,13 +155,13 @@ contract HandshakeTokenTransfer is EIP712 {
             )
         );
 
-        bytes32 hash = _hashTypedDataV4(structHash);
+        bytes32 senderHash = _hashTypedDataV4(senderStructHash);
         require(
-            ECDSA.recover(hash, senderSign) == _transaction.sender,
-            "Invalid signature of sender"
+            ECDSA.recover(senderHash, senderSign) == _transaction.sender,
+            "Handshake: Invalid signature of sender"
         );
 
-        bytes32 structHashReceiver = keccak256(
+        bytes32 receiverStructHash = keccak256(
             abi.encode(
                 RECEIVER_TYPEHASH,
                 _transaction.sender,
@@ -173,11 +173,11 @@ contract HandshakeTokenTransfer is EIP712 {
             )
         );
 
-        bytes32 receiverHash = _hashTypedDataV4(structHashReceiver);
+        bytes32 receiverHash = _hashTypedDataV4(receiverStructHash);
 
         require(
             ECDSA.recover(receiverHash, receiverSign) == _transaction.receiver,
-            "Invalid signature of receiver"
+            "Handshake: Invalid signature of receiver"
         );
 
         _authorizationStates[_transaction.sender][_transaction.nonce] = true;
@@ -215,10 +215,10 @@ contract HandshakeTokenTransfer is EIP712 {
             )
         );
 
-        bytes32 receiverHash = _hashTypedDataV4(senderStructHash);
+        bytes32 senderHash = _hashTypedDataV4(senderStructHash);
         require(
-            ECDSA.recover(hash, senderSign) == _transaction.sender,
-            "Invalid signature of sender"
+            ECDSA.recover(senderHash, senderSign) == _transaction.sender,
+            "Handshake: Invalid signature of sender"
         );
 
         bytes32 receiverStructHash = keccak256(
@@ -237,7 +237,7 @@ contract HandshakeTokenTransfer is EIP712 {
 
         require(
             ECDSA.recover(receiverHash, receiverSign) == _transaction.receiver,
-            "Invalid signature of receiver"
+            "Handshake: Invalid signature of receiver"
         );
 
         _authorizationStates[_transaction.sender][_transaction.nonce] = true;
@@ -287,24 +287,6 @@ contract HandshakeTokenTransfer is EIP712 {
     ) internal view {
         bytes32 structHash = keccak256(
             abi.encode(
-                RECEIVER_TYPEHASH,
-                _transaction.sender,
-                _transaction.receiver,
-                _transaction.tokenAddress,
-                _transaction.amount,
-                _transaction.deadline,
-                _transaction.nonce
-            )
-        );
-
-        bytes32 hash = _hashTypedDataV4(structHash);
-        require(
-            ECDSA.recover(hash, senderSign) == _transaction.sender,
-            "Invalid signature of sender"
-        );
-
-        bytes32 structHashReceiver = keccak256(
-            abi.encode(
                 SENDER_TYPEHASH,
                 _transaction.sender,
                 _transaction.receiver,
@@ -315,10 +297,28 @@ contract HandshakeTokenTransfer is EIP712 {
             )
         );
 
-        bytes32 receiverHash = _hashTypedDataV4(structHashReceiver);
+        bytes32 senderHash = _hashTypedDataV4(structHash);
+        require(
+            ECDSA.recover(senderHash, senderSign) == _transaction.sender,
+            "Handhshake: Invalid signature of sender"
+        );
+
+        bytes32 receiverStructHash = keccak256(
+            abi.encode(
+                RECEIVER_TYPEHASH,
+                _transaction.sender,
+                _transaction.receiver,
+                _transaction.tokenAddress,
+                _transaction.amount,
+                _transaction.deadline,
+                _transaction.nonce
+            )
+        );
+
+        bytes32 receiverHash = _hashTypedDataV4(receiverStructHash);
         require(
             ECDSA.recover(receiverHash, receiverSign) == _transaction.receiver,
-            "Invalid signature of receiver"
+            "Handshake: Invalid signature of receiver"
         );
     }
 

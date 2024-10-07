@@ -6,6 +6,7 @@ import AddressWithCopy from "../quickaccess/AddressWithCopy";
 import Blockies from "react-blockies";
 import { useAccount } from "wagmi";
 import { formatToHumanReadableDate } from "../utils/formatToHumanReadableDate";
+import { toast } from "react-toastify";
 
 function SingleTranscationAccordianExpanded({
   transaction,
@@ -36,9 +37,12 @@ function SingleTranscationAccordianExpanded({
     }
   };
   useEffect(() => {
-    if (transaction.tokenId) {
-      loadNFTDetails(transaction.tokenId);
-    }
+    const getNftDetails = async () => {
+      if (transaction.tokenId) {
+        await loadNFTDetails(transaction.tokenId);
+      }
+      getNftDetails();
+    };
   }, [transaction]);
 
   return (

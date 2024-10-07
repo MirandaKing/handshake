@@ -46,7 +46,7 @@ const InitiateTransaction = ({ onClose }) => {
     fetchUserBalance();
   }, [address]);
 
-  console.log("balanceeee", userBTTCBalance);
+  // console.log("balanceeee", userBTTCBalance);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingToken, setisLoadingToken] = useState(false);
   const [errorDisplay, setErrorDisplay] = useState(false);
@@ -210,44 +210,81 @@ const InitiateTransaction = ({ onClose }) => {
       let nonce = await generateNonce();
       console.log("nonceeeeee", nonce);
       var amount = transaction.amount;
-      if (isERC20) {
+      let signature;
+      const deadline = BigInt(Math.floor(Date.now() / 1000) + 604800);
+      if (!isERC20) {
+        console.log("in native");
         amount = parseUnits(transaction.amount, tokenDetails.decimals);
+        signature = await client.signTypedData({
+          account: address,
+          domain: {
+            name: "HandshakeTokenTransfer",
+            version: "1",
+            chainId: "1029",
+            verifyingContract: `${process.env.NEXT_PUBLIC_TESTNET_CONTRACT_ADDRESS}`,
+          },
+          types: {
+            EIP712Domain: [
+              { name: "name", type: "string" },
+              { name: "version", type: "string" },
+              { name: "chainId", type: "uint256" },
+              { name: "verifyingContract", type: "address" },
+            ],
+            initiateTransaction: [
+              { name: "sender", type: "address" },
+              { name: "receiver", type: "address" },
+              { name: "amount", type: "uint256" },
+              { name: "deadline", type: "uint256" },
+              { name: "nonce", type: "uint256" },
+            ],
+          },
+          primaryType: "initiateTransaction",
+          message: {
+            sender: address,
+            receiver: transaction.receiver,
+            amount: amount,
+            deadline: deadline,
+            nonce: nonce,
+          },
+        });
       } else {
         amount = parseEther(transaction.amount);
+        signature = await client.signTypedData({
+          account: address,
+          domain: {
+            name: "HandshakeTokenTransfer",
+            version: "1",
+            chainId: "1029",
+            verifyingContract: `${process.env.NEXT_PUBLIC_TESTNET_CONTRACT_ADDRESS}`,
+          },
+          types: {
+            EIP712Domain: [
+              { name: "name", type: "string" },
+              { name: "version", type: "string" },
+              { name: "chainId", type: "uint256" },
+              { name: "verifyingContract", type: "address" },
+            ],
+            initiateTransaction: [
+              { name: "sender", type: "address" },
+              { name: "receiver", type: "address" },
+              { name: "tokenAddress", type: "address" },
+              { name: "amount", type: "uint256" },
+              { name: "deadline", type: "uint256" },
+              { name: "nonce", type: "bytes32" },
+            ],
+          },
+          primaryType: "initiateTransaction",
+          message: {
+            sender: address,
+            receiver: transaction.receiver,
+            tokenAddress: transaction.token,
+            amount: amount,
+            deadline: deadline,
+            nonce: nonce,
+          },
+        });
       }
 
-      const signature = await client.signTypedData({
-        account: address,
-        domain: {
-          name: "HandshakeTokenTransfer",
-          version: "1",
-          chainId: "1029",
-          verifyingContract: `${process.env.NEXT_PUBLIC_TESTNET_CONTRACT_ADDRESS}`,
-        },
-        types: {
-          EIP712Domain: [
-            { name: "name", type: "string" },
-            { name: "version", type: "string" },
-            { name: "chainId", type: "uint256" },
-            { name: "verifyingContract", type: "address" },
-          ],
-          initiateTransaction: [
-            { name: "nonce", type: "uint256" },
-            { name: "sender", type: "address" },
-            { name: "receiver", type: "address" },
-            { name: "amount", type: "uint256" },
-            { name: "tokenName", type: "string" },
-          ],
-        },
-        primaryType: "initiateTransaction",
-        message: {
-          nonce: nonce,
-          sender: address,
-          receiver: transaction.receiver,
-          amount: amount,
-          tokenName: tokenDetails.symbol !== "" ? tokenDetails.symbol : "BTTC",
-        },
-      });
       const currentDate = new Date();
       console.log("Signature:", signature);
       if (signature) {
@@ -266,6 +303,7 @@ const InitiateTransaction = ({ onClose }) => {
           initiateDate: currentDate,
           decimals: tokenDetails.symbol !== "" ? tokenDetails.decimals : 18,
           nonce: nonce,
+          deadline: deadline.toString(),
         };
         console.log(userData);
         try {
