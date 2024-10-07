@@ -128,7 +128,7 @@ export default function SendNFT() {
     );
 
     console.log("nonce data:", packedData);
-    // return keccak256(packedData);
+    return keccak256(packedData);
     // return 0x0000000000000000000000000000000000000000000000000000000000000001
   };
 
