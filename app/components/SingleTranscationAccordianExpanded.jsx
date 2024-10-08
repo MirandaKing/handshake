@@ -23,11 +23,14 @@ function SingleTranscationAccordianExpanded({
   const loadNFTDetails = async (id) => {
     setNftDetails(null);
     try {
-      const response = await fetch(`https://api.jsonbin.io/v3/b/${id}`);
+      const response = await fetch(
+        `https://api.jsonbin.io/v3/b/67019e9ee41b4d34e43d9b6f`
+      );
       if (!response.ok) {
         throw new Error("Failed to fetch NFT details");
       }
       const data = await response.json();
+      console.log("nft", data);
       setNftDetails(data);
     } catch (error) {
       toast.error(
@@ -38,11 +41,11 @@ function SingleTranscationAccordianExpanded({
   };
   useEffect(() => {
     const getNftDetails = async () => {
-      if (transaction.tokenId) {
-        await loadNFTDetails(transaction.tokenId);
+      if (transaction.isNFT) {
+        await loadNFTDetails();
       }
-      getNftDetails();
     };
+    getNftDetails();
   }, [transaction]);
 
   return (

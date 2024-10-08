@@ -94,7 +94,7 @@ export const approveNftToken = async (tokenId, tokenContractAddress, address) =>
 
   // Handle the execution result if needed
   if (execute) {
-    return { success: true, message: `Approved ${amount} tokens successfully` };
+    return { success: true, message: `Approved nft successfully` };
   } else {
     return { success: false, message: `Approval failed` };
   }

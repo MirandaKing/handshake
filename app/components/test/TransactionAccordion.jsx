@@ -379,11 +379,13 @@ const TransactionAccordion = ({ transactions }) => {
       if (execute) {
         await publicClient.waitForTransactionReceipt({ hash: execute });
       } else {
-        throw new Error("Transaction hash is undefined");
+        // throw new Error("Transaction hash is undefined");
+        console.log("tranaction hash is undefined");
       }
 
       // Update transaction status upon success
       if (execute) {
+        console.log("cp#1 for db");
         const userData = {
           TransactionId: transaction.TransactionId,
           status: "completed",
@@ -392,16 +394,13 @@ const TransactionAccordion = ({ transactions }) => {
         };
 
         try {
-          let result = await fetch(
-            `${process.env.NEXT_PUBLIC_APP_URL}api/payment-completed`,
-            {
-              method: "PUT",
-              body: JSON.stringify(userData),
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
+          let result = await fetch(`/api/payment-completed`, {
+            method: "PUT",
+            body: JSON.stringify(userData),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
           const response = await result.json();
           console.log("Payment update response: ", response);
         } catch (error) {

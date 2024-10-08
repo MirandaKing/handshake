@@ -316,7 +316,7 @@ const InitiateTransaction = ({ onClose }) => {
           toast.success("Token transfer initiated successfully!");
           setIsLoading(false);
           window.location.reload();
-          onClose();
+          // onClose();
           // console.log(response.message);
         } catch (error) {
           toast.error("Error while signing");
