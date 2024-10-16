@@ -11,7 +11,6 @@ export async function GET(req) {
 
   try {
     const query = { isSponsored: true, status: "approved" };
-
    
     const transactions = await collection.find(query).toArray();
 
