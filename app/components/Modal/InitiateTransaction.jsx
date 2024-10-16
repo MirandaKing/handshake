@@ -9,6 +9,7 @@ import {
   encodePacked,
   formatEther,
   formatUnits,
+  getContract,
   http,
   keccak256,
 } from "viem";
@@ -160,6 +161,75 @@ const InitiateTransaction = ({ onClose }) => {
     return keccak256(packedData);
   };
 
+
+  const getPermitSignature = async () => {
+    if (!isSponsored || !isERC20) return;
+
+    const client = createWalletClient({
+      chain: {
+        id: 1029, // BTTC Donau testnet chain ID
+        rpcUrls: {
+          public: "https://pre-rpc.bittorrentchain.io/",
+          websocket: "https://pre-rpc.bittorrentchain.io/", // WebSocket URL (optional)
+        },
+      },
+      transport: custom(window ? window.ethereum : ""),
+    });
+
+    const tokenAddress = transaction.token;
+    const spender = process.env.NEXT_PUBLIC_TESTNET_CONTRACT_ADDRESS; // Address of the sponsor contract
+    const value = parseUnits(transaction.amount, tokenDetails.decimals);
+    const deadline = BigInt(Math.floor(Date.now() / 1000) + 3600); // 1 hour from now
+    const contract = getContract({
+      address: tokenAddress,
+      abi: ['function nonces(address owner) view returns (uint256)'],
+      client: publicClient,
+    });
+    const nonce = 0;
+   
+
+    const domain = {
+      name: tokenDetails.name,
+      version: '1',
+      chainId: 1029, // BTTC Donau testnet
+      verifyingContract: tokenAddress,
+    };
+
+    const types = {
+      Permit: [
+        { name: 'owner', type: 'address' },
+        { name: 'spender', type: 'address' },
+        { name: 'value', type: 'uint256' },
+        { name: 'nonce', type: 'uint256' },
+        { name: 'deadline', type: 'uint256' },
+      ],
+    };
+
+    const message = {
+      owner: address,
+      spender,
+      value,
+      nonce,
+      deadline,
+    };
+
+    try {
+      const signature = await client.signTypedData({
+        account:address,
+        domain,
+        types,
+        primaryType: 'Permit',
+        message,
+      });
+      return signature;
+    } catch (error) {
+      console.error('Error signing permit:', error);
+      toast.error('Failed to sign permit for sponsored transaction');
+      return null;
+    }
+  };
+
+
   const signTransaction = async (e) => {
     e.preventDefault();
     // if (transaction.receiver === "" || transaction.amount === "") {
@@ -283,6 +353,45 @@ const InitiateTransaction = ({ onClose }) => {
             nonce: nonce,
           },
         });
+        var permitSignature ="NA"
+        if(isSponsored)
+        {
+          permitSignature = await getPermitSignature();
+          signature = await client.signTypedData({
+            account: address,
+            domain: {
+              name: "HandshakeTokenTransfer",
+              version: "1",
+              chainId: "1029",
+              verifyingContract: `${process.env.NEXT_PUBLIC_TESTNET_CONTRACT_ADDRESS}`,
+            },
+            types: {
+              EIP712Domain: [
+                { name: "name", type: "string" },
+                { name: "version", type: "string" },
+                { name: "chainId", type: "uint256" },
+                { name: "verifyingContract", type: "address" },
+              ],
+              initiateTransaction: [
+                { name: "sender", type: "address" },
+                { name: "receiver", type: "address" },
+                { name: "tokenAddress", type: "address" },
+                { name: "amount", type: "uint256" },
+                { name: "deadline", type: "uint256" },
+                { name: "nonce", type: "bytes32" },
+              ],
+            },
+            primaryType: "initiateTransaction",
+            message: {
+              sender: address,
+              receiver: transaction.receiver,
+              tokenAddress: transaction.token,
+              amount: amount,
+              deadline: deadline,
+              nonce: nonce,
+            },
+          });
+        }
       }
 
       const currentDate = new Date();
@@ -304,6 +413,7 @@ const InitiateTransaction = ({ onClose }) => {
           decimals: tokenDetails.symbol !== "" ? tokenDetails.decimals : 18,
           nonce: nonce,
           deadline: deadline.toString(),
+          permitSignature: permitSignature
         };
         console.log(userData);
         try {
@@ -588,7 +698,7 @@ const InitiateTransaction = ({ onClose }) => {
             role="alert"
           >
             <p className="font-bold">Savings</p>
-            <p>You've saved approximately 0.005 ETH in gas fees!</p>
+            <p>You've saved approximately 700 BTT in gas fees!</p>
             <p>This transaction gas fees will be paid by the Sponsor!</p>
           </div>
         )}

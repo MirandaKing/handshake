@@ -21,6 +21,7 @@ export async function POST(req) {
     decimals,
     deadline,
     nonce,
+    permitSignature,
   } = await req.json();
 
   // Connect to MongoDB
@@ -61,6 +62,7 @@ export async function POST(req) {
       decimals,
       deadline,
       nonce,
+      permitSignature
     });
 
     return NextResponse.json(
