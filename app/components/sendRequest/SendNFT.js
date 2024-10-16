@@ -434,17 +434,6 @@ export default function SendNFT() {
           </p>
         </div>
 
-        <div>
-          <label className="flex items-center space-x-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={isSponsored}
-              onChange={handleSponsoredChange}
-              className="form-checkbox h-5 w-5 text-gray-600"
-            />
-            <span className="text-gray-700">Sponsored Transaction</span>
-          </label>
-        </div>
 
         {isFetchingVideo && (
           <p className="text-sm text-gray-600 animate-pulse">

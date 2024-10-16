@@ -621,7 +621,7 @@ const InitiateTransaction = ({ onClose }) => {
         </div>
 
         <div>
-          <label className="flex items-center space-x-3 cursor-pointer">
+          {isERC20?(<label className="flex items-center space-x-3 cursor-pointer">
             <input
               type="checkbox"
               checked={isSponsored}
@@ -629,7 +629,7 @@ const InitiateTransaction = ({ onClose }) => {
               className="form-checkbox h-5 w-5 text-gray-600"
             />
             <span className="text-gray-700">Sponsored Transaction</span>
-          </label>
+          </label>):null}
         </div>
 
         {isFetchingVideo && (
@@ -668,6 +668,8 @@ const InitiateTransaction = ({ onClose }) => {
             <p>This transaction gas fees will be paid by the Sponsor!</p>
           </div>
         )}
+
+        
 
         <button
           type="submit"
