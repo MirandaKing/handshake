@@ -461,7 +461,7 @@ const TransactionAccordion = ({ transactions }) => {
                 columns={{ xs: 6, sm: 10, md: 10 }}
               >
                 <CustomGridItem item xs={3} sm={1} md={1}>
-                  <div>{transaction.TransactionId}</div>
+                  <div>{index+1}</div>
                 </CustomGridItem>
                 <CustomGridItem item xs={3} sm={2} md={2}>
                   <div className="senderOrReceiverOnAccordian">
