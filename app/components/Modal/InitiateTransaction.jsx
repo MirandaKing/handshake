@@ -20,6 +20,7 @@ import { parseUnits, parseEther } from "viem";
 import { formSchemaLoadToken, formSchemaTransaction } from "./schema";
 import LoadingSpinner from "./LoadingSpinner";
 import { Send } from "lucide-react";
+import permitTokenAbi from "../../quickaccess/PermittokenABI.json"
 
 const publicClient = createPublicClient({
   chain: {
@@ -182,44 +183,43 @@ const InitiateTransaction = ({ onClose }) => {
     const deadline = BigInt(Math.floor(Date.now() / 1000) + 3600); // 1 hour from now
     const contract = getContract({
       address: tokenAddress,
-      abi: ['function nonces(address owner) view returns (uint256)'],
+      abi: permitTokenAbi,
       client: publicClient,
     });
-    const nonce = 0;
-   
-
-    const domain = {
-      name: tokenDetails.name,
-      version: '1',
-      chainId: 1029, // BTTC Donau testnet
-      verifyingContract: tokenAddress,
-    };
-
-    const types = {
-      Permit: [
-        { name: 'owner', type: 'address' },
-        { name: 'spender', type: 'address' },
-        { name: 'value', type: 'uint256' },
-        { name: 'nonce', type: 'uint256' },
-        { name: 'deadline', type: 'uint256' },
-      ],
-    };
-
-    const message = {
-      owner: address,
-      spender,
-      value,
-      nonce,
-      deadline,
-    };
+    const nonce = await contract.read.nonces([address]);
+    const eip712Domain = await contract.read.eip712Domain();
+    
 
     try {
       const signature = await client.signTypedData({
         account:address,
-        domain,
-        types,
+        domain:{
+          name: eip712Domain[1],
+          version: eip712Domain[2],
+          chainId: 1029, // BTTC Donau testnet
+          verifyingContract: tokenAddress},
+        types: {
+            EIP712Domain: [
+              { name: "name", type: "string" },
+              { name: "version", type: "string" },
+              { name: "chainId", type: "uint256" },
+              { name: "verifyingContract", type: "address" },
+            ],     
+          Permit: [
+            { name: 'owner', type: 'address' },
+            { name: 'spender', type: 'address' },
+            { name: 'value', type: 'uint256' },
+            { name: 'nonce', type: 'uint256' },
+            { name: 'deadline', type: 'uint256' },
+          ],
+        },
         primaryType: 'Permit',
-        message,
+        message:{ 
+          owner: address,
+          spender,
+          value,
+          nonce,
+          deadline},
       });
       return signature;
     } catch (error) {
