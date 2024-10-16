@@ -163,7 +163,7 @@ const InitiateTransaction = ({ onClose }) => {
   };
 
 
-  const getPermitSignature = async () => {
+  const getPermitSignature = async (deadline) => {
     if (!isSponsored || !isERC20) return;
 
     const client = createWalletClient({
@@ -180,7 +180,7 @@ const InitiateTransaction = ({ onClose }) => {
     const tokenAddress = transaction.token;
     const spender = process.env.NEXT_PUBLIC_TESTNET_CONTRACT_ADDRESS; // Address of the sponsor contract
     const value = parseUnits(transaction.amount, tokenDetails.decimals);
-    const deadline = BigInt(Math.floor(Date.now() / 1000) + 3600); // 1 hour from now
+   
     const contract = getContract({
       address: tokenAddress,
       abi: permitTokenAbi,
@@ -356,41 +356,7 @@ const InitiateTransaction = ({ onClose }) => {
         var permitSignature ="NA"
         if(isSponsored)
         {
-          permitSignature = await getPermitSignature();
-          signature = await client.signTypedData({
-            account: address,
-            domain: {
-              name: "HandshakeTokenTransfer",
-              version: "1",
-              chainId: "1029",
-              verifyingContract: `${process.env.NEXT_PUBLIC_TESTNET_CONTRACT_ADDRESS}`,
-            },
-            types: {
-              EIP712Domain: [
-                { name: "name", type: "string" },
-                { name: "version", type: "string" },
-                { name: "chainId", type: "uint256" },
-                { name: "verifyingContract", type: "address" },
-              ],
-              initiateTransaction: [
-                { name: "sender", type: "address" },
-                { name: "receiver", type: "address" },
-                { name: "tokenAddress", type: "address" },
-                { name: "amount", type: "uint256" },
-                { name: "deadline", type: "uint256" },
-                { name: "nonce", type: "bytes32" },
-              ],
-            },
-            primaryType: "initiateTransaction",
-            message: {
-              sender: address,
-              receiver: transaction.receiver,
-              tokenAddress: transaction.token,
-              amount: amount,
-              deadline: deadline,
-              nonce: nonce,
-            },
-          });
+          permitSignature = await getPermitSignature(deadline);  // added for taking permit signature
         }
       }
 

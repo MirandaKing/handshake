@@ -10,6 +10,7 @@ import History from "./Types/History";
 import InitiateTransaction from "./Modal/InitiateTransaction";
 import Link from "next/link";
 import { Send } from "lucide-react";
+import Sponsored from "./Types/Sponsored";
 
 const TransactionTypes = () => {
   const { address } = useAccount();
@@ -79,6 +80,14 @@ const TransactionTypes = () => {
             activeTab={activeTab}
           />
         );
+        case "sponsored":
+        return (
+          <Sponsored
+            transactions={transactions}
+            address={address}
+            activeTab={activeTab}
+          />
+        );
       default:
         return (
           <Queue
@@ -115,14 +124,7 @@ const TransactionTypes = () => {
               >
                 Queue
               </button>
-              {/* <button
-                className={`px-4 py-2  text-base font-bold ${
-                  activeTab === "received" ? "activeTabBtn" : "inactiveBtn"
-                }`}
-                onClick={() => handleTabChange("received")}
-              >
-                Received
-              </button> */}
+             
               <button
                 className={`px-4 py-2  text-base font-bold ${
                   activeTab === "history" ? "activeTabBtn" : "inactiveBtn"
@@ -130,6 +132,14 @@ const TransactionTypes = () => {
                 onClick={() => handleTabChange("history")}
               >
                 History
+              </button>
+              <button
+                className={`px-4 py-2  text-base font-bold ${
+                  activeTab === "sponsored" ? "activeTabBtn" : "inactiveBtn"
+                }`}
+                onClick={() => handleTabChange("sponsored")}
+              >
+                Sponsored
               </button>
             </div>
           </div>
