@@ -83,9 +83,7 @@ const TransactionTypes = () => {
         case "sponsored":
         return (
           <Sponsored
-            transactions={transactions}
-            address={address}
-            activeTab={activeTab}
+           
           />
         );
       default:
