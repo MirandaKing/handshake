@@ -12,7 +12,7 @@ const publicClient = createPublicClient({
   transport: http("https://pre-rpc.bittorrentchain.io/"), // Passing RPC URL to http function
 });
 
-export async function getTokenDetails(TokenAddress) {
+export async function getTokenDetails(TokenAddress,address) {
   try {
     const contract = getContract({
       address: TokenAddress,
@@ -23,7 +23,7 @@ export async function getTokenDetails(TokenAddress) {
     const symbol = await contract.read.symbol();
     const decimals = await contract.read.decimals();
     const balance = await contract.read.balanceOf([
-      "0xF0F21D6AAc534345E16C2DeE12c3998A4e32e789",
+      address,
     ]);
     console.log(balance);
     return {
