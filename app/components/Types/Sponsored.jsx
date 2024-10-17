@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Grid, Paper, Typography, Button, Box } from "@mui/material";
+import { Grid, Paper, Typography, Button } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { createPublicClient, formatUnits, parseSignature, http, createWalletClient, custom } from "viem";
 import { useAccount } from "wagmi";
@@ -12,14 +12,17 @@ import handshakeABI from "../../transaction-queue/[id]/handshakeABI.json";
 const TransactionPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(2),
   color: theme.palette.text.secondary,
-  height: '100%',
+  height: 'auto',
   display: 'flex',
-  flexDirection: 'column',
+  flexDirection: 'row',
   justifyContent: 'space-between',
+  alignItems: 'center', // Align items vertically centered
+  border: '1px solid', // Optional: Add a border for visibility
+  marginBottom: theme.spacing(1), // Space between transactions
 }));
 
-const InfoItem = styled(Box)(({ theme }) => ({
-  marginBottom: theme.spacing(1),
+const InfoItem = styled('div')(({ theme }) => ({
+  margin: theme.spacing(1), // Space between info items
 }));
 
 const Sponsored = () => {
@@ -47,7 +50,7 @@ const Sponsored = () => {
         transaction.receiverAddress,
         transaction.tokenAddress,
         transaction.amount,
-        transaction.deadline, // Assuming deadline is part of the transaction object
+        transaction.deadline,
         transaction.nonce,
       ];
 
@@ -58,7 +61,7 @@ const Sponsored = () => {
         TransactionDetails,
         v,
         r,
-        s
+        s,
       ];
 
       const { request } = await publicClient.simulateContract({
@@ -70,36 +73,32 @@ const Sponsored = () => {
         gasLimit: 3000000,
       });
 
-      console.log(request);
-
       let walletClient;
-if (typeof window !== "undefined" && window.ethereum) {
-  walletClient = createWalletClient({
-    chain: {
-      id: 1029, // BTTC Donau testnet chain ID
-      rpcUrls: {
-        public: "https://pre-rpc.bittorrentchain.io/",
-        websocket: "https://pre-rpc.bittorrentchain.io/", // WebSocket URL (optional)
-      },
-    },
-    transport: custom(window.ethereum),
-  });
-}
+      if (typeof window !== "undefined" && window.ethereum) {
+        walletClient = createWalletClient({
+          chain: {
+            id: 1029,
+            rpcUrls: {
+              public: "https://pre-rpc.bittorrentchain.io/",
+              websocket: "https://pre-rpc.bittorrentchain.io/",
+            },
+          },
+          transport: custom(window.ethereum),
+        });
+      }
+
       const execute = await walletClient.writeContract(request);
       if (execute) {
         await publicClient.waitForTransactionReceipt({ hash: execute });
       } else {
-        // throw new Error("Transaction hash is undefined");
-        console.log("tranaction hash is undefined");
+        console.log("transaction hash is undefined");
       }
 
-      // Update transaction status upon success
       if (execute) {
-        
         const userData = {
           TransactionId: transaction.TransactionId,
           status: "completed",
-          transectionDate: currentDate,
+          transectionDate: new Date().toISOString(),
           transactionHash: execute,
         };
 
@@ -117,8 +116,8 @@ if (typeof window !== "undefined" && window.ethereum) {
           console.error("Error updating payment status:", error);
         }
 
-      toast.success("Transaction executed successfully");
-    }
+        toast.success("Transaction executed successfully");
+      }
     } catch (error) {
       console.error("Error executing transaction:", error);
       toast.error("Failed to execute transaction");
@@ -151,19 +150,17 @@ if (typeof window !== "undefined" && window.ethereum) {
       </Typography>
       <Grid container spacing={3}>
         {transactions.map((transaction, index) => (
-          <Grid item xs={12} sm={6} md={4} key={index}>
+          <Grid item xs={12} key={index}>
             <TransactionPaper elevation={3}>
               <InfoItem>
                 <Typography variant="subtitle1">
-                  ID: {transaction.TransactionId}
+                   {index + 1}
                 </Typography>
               </InfoItem>
               <InfoItem>
                 <Typography variant="body2">
                   Amount: {transaction.isNFT ? "NFT" : `${formatUnits(transaction.amount, transaction.decimals)} ${transaction.tokenName}`}
                 </Typography>
-              </InfoItem>
-              <InfoItem>
               </InfoItem>
               <InfoItem>
                 <Typography variant="body2">
