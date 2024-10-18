@@ -7,6 +7,7 @@ import Blockies from "react-blockies";
 import { useAccount } from "wagmi";
 import { formatToHumanReadableDate } from "../utils/formatToHumanReadableDate";
 import { toast } from "react-toastify";
+import Link from "next/link";
 
 function SingleTranscationAccordianExpanded({
   transaction,
@@ -16,6 +17,7 @@ function SingleTranscationAccordianExpanded({
   selectedIndex,
   isRejectedBtn,
   handleActionButtonClick,
+  isSponsorTab,
 }) {
   const { address } = useAccount();
   const [nftDetails, setNftDetails] = useState(null);
@@ -94,6 +96,11 @@ function SingleTranscationAccordianExpanded({
                       short={true}
                     />
                   </div>
+                  {address && address === transaction.receiverAddress ? (
+                    <span className="ml-1 rounded-full bg-[#29FF81] py-[0] px-2 text-black text-sm">
+                      You
+                    </span>
+                  ) : null}
                 </div>
               </div>
             </div>
@@ -110,7 +117,19 @@ function SingleTranscationAccordianExpanded({
                   <div className="value">
                     {transaction.isSponsored ? "Yes" : "No"}
                   </div>
-                  <div className="value">txHash</div>
+                  <div className="value">
+                    {transaction.transactionHash ? (
+                      <Link
+                        href={`https://testnet.bttcscan.com/tx/${transaction.transactionHash}`}
+                        target="_blank"
+                        className="underline decoration-2 hover:decoration-[#29FF81]"
+                      >
+                        Open Link
+                      </Link>
+                    ) : (
+                      "txHash"
+                    )}
+                  </div>
                   <div className="value">
                     {transaction?.initiateDate
                       ? formatToHumanReadableDate(transaction.initiateDate)
@@ -135,6 +154,11 @@ function SingleTranscationAccordianExpanded({
                           short={true}
                         />
                       </div>
+                      {address && address === transaction.senderAddress ? (
+                        <span className="ml-1 rounded-full bg-[#29FF81] py-[0] px-2 text-black text-sm">
+                          You
+                        </span>
+                      ) : null}
                     </div>
                   </div>
                 </div>
@@ -226,7 +250,9 @@ function SingleTranscationAccordianExpanded({
                   {transaction.status === "approved" ||
                   transaction.status === "inititated" ||
                   transaction.status === "rejected"
-                    ? "Waiting for Sender to Execute"
+                    ? isSponsorTab && transaction.senderAddress !== address
+                      ? "Waiting for Sponsor to Execute"
+                      : "Waiting for Sender to Execute"
                     : transaction.status === "completed"
                     ? "Executed"
                     : null}
@@ -260,9 +286,11 @@ function SingleTranscationAccordianExpanded({
               <>
                 <button
                   className={
-                    address &&
-                    transaction.senderAddress === address &&
-                    transaction.status === "inititated"
+                    isSponsorTab && transaction.status === "approved"
+                      ? "execute-action-btn action-btn"
+                      : address &&
+                        transaction.senderAddress === address &&
+                        transaction.status === "inititated"
                       ? "waiting-action-btn action-btn"
                       : transaction.senderAddress === address &&
                         transaction.status === "approved"
@@ -278,6 +306,10 @@ function SingleTranscationAccordianExpanded({
                   isRejectedBtn !== index &&
                   selectedIndex === index
                     ? "Loading..."
+                    : isSponsorTab &&
+                      transaction.status === "approved" &&
+                      transaction.senderAddress !== address
+                    ? "Sponsor Transaction"
                     : address &&
                       transaction.senderAddress === address &&
                       transaction.status === "inititated"
@@ -290,21 +322,41 @@ function SingleTranscationAccordianExpanded({
                     ? "Approve"
                     : transaction.status === "rejected"
                     ? "Rejected"
-                    : "waiting"}
+                    : "Waiting"}
                 </button>
-                <button
-                  className="rejected-action-btn action-btn"
-                  onClick={() => cancelTransaction(transaction, index)}
-                >
-                  {isLoading && isRejectedBtn === index
-                    ? "Loading..."
-                    : "Reject"}
-                </button>
+                {!isSponsorTab && (
+                  <button
+                    className="rejected-action-btn action-btn"
+                    onClick={() => cancelTransaction(transaction, index)}
+                  >
+                    {isLoading && isRejectedBtn === index
+                      ? "Loading..."
+                      : "Reject"}
+                  </button>
+                )}
               </>
             )}
           </div>
         </div>
       </div>
+      {isSponsorTab && (
+        <div
+          className="my-4 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md text-left"
+          role="alert"
+        >
+          <p className="font-bold mb-2">⭐ Sponsored Transaction</p>
+          <p className="text-sm">
+            This transaction is sponsored, meaning zero gas fees for sender!
+          </p>
+          <p className="text-sm">
+            Enjoy faster and more cost-effective transactions on the network.
+          </p>
+          <p className="mt-3 text-sm italic">
+            Note: Currently, for testing purposes, anyone can be the sponsor and
+            execute sponsored transactions by covering the gas fees.
+          </p>
+        </div>
+      )}
     </>
   );
 }

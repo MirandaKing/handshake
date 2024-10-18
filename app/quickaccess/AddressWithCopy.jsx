@@ -23,7 +23,7 @@ const AddressWithCopy = ({ address, short }) => {
     <div className="flex items-center">
       <span className="mr-2 break-words">{truncatedAddress}</span>
       {isCopied ? (
-        <FiCheck className="text-green-500" />
+        <FiCheck className="text-black bg-[#29FF81] rounded-full" />
       ) : (
         <FiCopy className="cursor-pointer" onClick={copyAddress} />
       )}

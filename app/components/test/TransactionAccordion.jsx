@@ -101,7 +101,11 @@ if (typeof window !== "undefined" && window.ethereum) {
     transport: custom(window.ethereum),
   });
 }
-const TransactionAccordion = ({ transactions }) => {
+const TransactionAccordion = ({
+  transactions,
+  isSponsorTab,
+  handleSponsoredTxExecute,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isRejectedBtn, setIsRejectedBtn] = useState(-1);
@@ -228,9 +232,9 @@ const TransactionAccordion = ({ transactions }) => {
           setIsLoading(false);
           toast.success("Signed Sucessfully");
 
-          await new Promise((resolve) => setTimeout(resolve, 3000));
+          // await new Promise((resolve) => setTimeout(resolve, 3000));
 
-          window.location.reload();
+          // window.location.reload();
         } catch (error) {
           console.error("Error signing transaction:", error);
           setIsLoading(false);
@@ -272,9 +276,9 @@ const TransactionAccordion = ({ transactions }) => {
 
       setIsLoading(false);
       toast.success("Rejected Sucessfully");
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      // await new Promise((resolve) => setTimeout(resolve, 3000));
 
-      window.location.reload();
+      // window.location.reload();
     } catch (error) {
       console.error("Error Rejecting transaction:", error);
       setIsLoading(false);
@@ -408,8 +412,8 @@ const TransactionAccordion = ({ transactions }) => {
         }
 
         toast.success("Execution successful");
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-        window.location.reload();
+        // await new Promise((resolve) => setTimeout(resolve, 3000));
+        // window.location.reload();
       }
     } catch (error) {
       toast.error("Execution failed");
@@ -421,6 +425,14 @@ const TransactionAccordion = ({ transactions }) => {
 
   const handleActionButtonClick = async (transaction, index) => {
     setSelectedIndex(index);
+    if (
+      isSponsorTab &&
+      transaction.isSponsored &&
+      transaction.senderAddress !== address
+    ) {
+      console.log("Sponsored tx called");
+      await handleSponsoredTxExecute(transaction);
+    }
     if (
       address &&
       transaction.senderAddress === address &&
@@ -434,6 +446,7 @@ const TransactionAccordion = ({ transactions }) => {
       transaction.senderAddress === address &&
       transaction.status === "approved"
     ) {
+      console.log("Normal Execute tx called");
       await executeTransaction(transaction);
     }
 
@@ -461,30 +474,56 @@ const TransactionAccordion = ({ transactions }) => {
                 columns={{ xs: 6, sm: 10, md: 10 }}
               >
                 <CustomGridItem item xs={3} sm={1} md={1}>
-                  <div>{index+1}</div>
+                  <div>{index + 1}</div>
                 </CustomGridItem>
                 <CustomGridItem item xs={3} sm={2} md={2}>
                   <div className="senderOrReceiverOnAccordian">
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 16 16"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      className={`${
-                        transaction.senderAddress === address
-                          ? "send"
-                          : "receive"
-                      }`}
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        clip-rule="evenodd"
-                        d="M9.56854 5.0101H6.9697C6.41462 5.0101 5.96465 4.56012 5.96465 4.00505C5.96465 3.44998 6.41462 3 6.9697 3H11.9949C12.2725 3 12.5237 3.11249 12.7056 3.29437C12.8875 3.47625 13 3.72751 13 4.00505V9.0303C13 9.58538 12.55 10.0354 11.9949 10.0354C11.4399 10.0354 10.9899 9.58538 10.9899 9.0303V6.43146L4.71573 12.7056C4.32323 13.0981 3.68687 13.0981 3.29437 12.7056C2.90188 12.3131 2.90188 11.6768 3.29437 11.2843L9.56854 5.0101Z"
-                        fill="#F02525"
-                      />
-                    </svg>
-                    {transaction.senderAddress === address ? "Send" : "Receive"}
+                    {isSponsorTab && transaction.isSponsored ? (
+                      <>
+                        <svg
+                          width="24px"
+                          height="24px"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="send rounded-full bg-[#29FF81] p-1"
+                        >
+                          <path
+                            d="M12 7V20M12 7H8.46429C7.94332 7 7.4437 6.78929 7.07533 6.41421C6.70695 6.03914 6.5 5.53043 6.5 5C6.5 4.46957 6.70695 3.96086 7.07533 3.58579C7.4437 3.21071 7.94332 3 8.46429 3C11.2143 3 12 7 12 7ZM12 7H15.5357C16.0567 7 16.5563 6.78929 16.9247 6.41421C17.293 6.03914 17.5 5.53043 17.5 5C17.5 4.46957 17.293 3.96086 16.9247 3.58579C16.5563 3.21071 16.0567 3 15.5357 3C12.7857 3 12 7 12 7ZM5 12H19V17.8C19 18.9201 19 19.4802 18.782 19.908C18.5903 20.2843 18.2843 20.5903 17.908 20.782C17.4802 21 16.9201 21 15.8 21H8.2C7.07989 21 6.51984 21 6.09202 20.782C5.71569 20.5903 5.40973 20.2843 5.21799 19.908C5 19.4802 5 18.9201 5 17.8V12ZM4.6 12H19.4C19.9601 12 20.2401 12 20.454 11.891C20.6422 11.7951 20.7951 11.6422 20.891 11.454C21 11.2401 21 10.9601 21 10.4V8.6C21 8.03995 21 7.75992 20.891 7.54601C20.7951 7.35785 20.6422 7.20487 20.454 7.10899C20.2401 7 19.9601 7 19.4 7H4.6C4.03995 7 3.75992 7 3.54601 7.10899C3.35785 7.20487 3.20487 7.35785 3.10899 7.54601C3 7.75992 3 8.03995 3 8.6V10.4C3 10.9601 3 11.2401 3.10899 11.454C3.20487 11.6422 3.35785 11.7951 3.54601 11.891C3.75992 12 4.03995 12 4.6 12Z"
+                            stroke="#000000"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        Sponsored
+                      </>
+                    ) : (
+                      <>
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 16 16"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className={`${
+                            transaction.senderAddress === address
+                              ? "send"
+                              : "receive"
+                          }`}
+                        >
+                          <path
+                            fillRule="evenodd"
+                            clipRule="evenodd"
+                            d="M9.56854 5.0101H6.9697C6.41462 5.0101 5.96465 4.56012 5.96465 4.00505C5.96465 3.44998 6.41462 3 6.9697 3H11.9949C12.2725 3 12.5237 3.11249 12.7056 3.29437C12.8875 3.47625 13 3.72751 13 4.00505V9.0303C13 9.58538 12.55 10.0354 11.9949 10.0354C11.4399 10.0354 10.9899 9.58538 10.9899 9.0303V6.43146L4.71573 12.7056C4.32323 13.0981 3.68687 13.0981 3.29437 12.7056C2.90188 12.3131 2.90188 11.6768 3.29437 11.2843L9.56854 5.0101Z"
+                            fill="#F02525"
+                          />
+                        </svg>
+                        {transaction.senderAddress === address
+                          ? "Send"
+                          : "Receive"}
+                      </>
+                    )}
                   </div>
                 </CustomGridItem>
                 <CustomGridItem item xs={3} sm={2} md={2}>
@@ -529,8 +568,11 @@ const TransactionAccordion = ({ transactions }) => {
                   <button
                     className={
                       address &&
-                      transaction.senderAddress === address &&
-                      transaction.status === "inititated"
+                      isSponsorTab &&
+                      transaction.status === "approved"
+                        ? "execute-action-btn action-btn"
+                        : transaction.senderAddress === address &&
+                          transaction.status === "inititated"
                         ? "waiting-action-btn action-btn"
                         : transaction.senderAddress === address &&
                           transaction.status === "approved"
@@ -551,7 +593,11 @@ const TransactionAccordion = ({ transactions }) => {
                     selectedIndex === index
                       ? "Loading..."
                       : address &&
-                        transaction.senderAddress === address &&
+                        isSponsorTab &&
+                        transaction.status === "approved" &&
+                        transaction.senderAddress !== address
+                      ? "Sponsor"
+                      : transaction.senderAddress === address &&
                         transaction.status === "inititated"
                       ? "Waiting"
                       : transaction.senderAddress === address &&
@@ -578,6 +624,7 @@ const TransactionAccordion = ({ transactions }) => {
                 handleActionButtonClick={handleActionButtonClick}
                 selectedIndex={selectedIndex}
                 isRejectedBtn={isRejectedBtn}
+                isSponsorTab={isSponsorTab}
               />
             </CustomAccordionDetails>
           </CustomAccordion>

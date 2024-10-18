@@ -179,6 +179,7 @@
   margin: 0px auto;
   padding-top: 30px;
   font-family: var(--font-dmsans);
+  padding-bottom: 100px;
 }
 .custom-container {
   display: block;

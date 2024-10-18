@@ -3,25 +3,33 @@
 import React, { useEffect, useState } from "react";
 import { Grid, Paper, Typography, Button } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { createPublicClient, formatUnits, parseSignature, http, createWalletClient, custom } from "viem";
+import {
+  createPublicClient,
+  formatUnits,
+  parseSignature,
+  http,
+  createWalletClient,
+  custom,
+} from "viem";
 import { useAccount } from "wagmi";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import handshakeABI from "../../transaction-queue/[id]/handshakeABI.json";
+import TransactionAccordion from "../test/TransactionAccordion";
 
 const TransactionPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(2),
   color: theme.palette.text.secondary,
-  height: 'auto',
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center', // Align items vertically centered
-  border: '1px solid', // Optional: Add a border for visibility
+  height: "auto",
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center", // Align items vertically centered
+  border: "1px solid", // Optional: Add a border for visibility
   marginBottom: theme.spacing(1), // Space between transactions
 }));
 
-const InfoItem = styled('div')(({ theme }) => ({
+const InfoItem = styled("div")(({ theme }) => ({
   margin: theme.spacing(1), // Space between info items
 }));
 
@@ -30,7 +38,7 @@ const Sponsored = () => {
   const { address } = useAccount();
   const [transactions, setTransaction] = useState([]);
 
-  const handleExecute = async (transaction) => {
+  const handleSponsoredTxExecute = async (transaction) => {
     setIsLoading(true);
     try {
       const publicClient = createPublicClient({
@@ -131,7 +139,7 @@ const Sponsored = () => {
       const fetchTransactions = async () => {
         const url = `/api/fetch-sponsored-transaction`;
         try {
-          const response = await fetch(url);
+          const response = await fetch(url, { cache: "no-store" });
           const data = await response.json();
           console.log(data);
           setTransaction(data);
@@ -145,66 +153,85 @@ const Sponsored = () => {
 
   return (
     <div>
-      <Typography variant="h5" gutterBottom>
+      <h1 className="text-black font-semibold text-xl my-4">
         Sponsored Transactions
-      </Typography>
-      <Grid container spacing={3}>
+      </h1>
+      {/* <Grid container spacing={3}>
         {transactions.map((transaction, index) => (
           <Grid item xs={12} key={index}>
             <TransactionPaper elevation={3}>
               <InfoItem>
-                <Typography variant="subtitle1">
-                   {index + 1}
+                <Typography variant="subtitle1">{index + 1}</Typography>
+              </InfoItem>
+              <InfoItem>
+                <Typography variant="body2">
+                  Amount:{" "}
+                  {transaction.isNFT
+                    ? "NFT"
+                    : `${formatUnits(
+                        transaction.amount,
+                        transaction.decimals
+                      )} ${transaction.tokenName}`}
                 </Typography>
               </InfoItem>
               <InfoItem>
                 <Typography variant="body2">
-                  Amount: {transaction.isNFT ? "NFT" : `${formatUnits(transaction.amount, transaction.decimals)} ${transaction.tokenName}`}
+                  Sender: {transaction.senderAddress.slice(0, 6)}...
+                  {transaction.senderAddress.slice(-4)}
                 </Typography>
               </InfoItem>
               <InfoItem>
                 <Typography variant="body2">
-                  Sender: {transaction.senderAddress.slice(0, 6)}...{transaction.senderAddress.slice(-4)}
+                  Receiver: {transaction.receiverAddress.slice(0, 6)}...
+                  {transaction.receiverAddress.slice(-4)}
                 </Typography>
               </InfoItem>
               <InfoItem>
                 <Typography variant="body2">
-                  Receiver: {transaction.receiverAddress.slice(0, 6)}...{transaction.receiverAddress.slice(-4)}
+                  Token Address: {transaction.tokenAddress.slice(0, 6)}...
+                  {transaction.tokenAddress.slice(-4)}
                 </Typography>
               </InfoItem>
               <InfoItem>
                 <Typography variant="body2">
-                  Token Address: {transaction.tokenAddress.slice(0, 6)}...{transaction.tokenAddress.slice(-4)}
+                  Initiated:{" "}
+                  {new Date(transaction.initiateDate).toLocaleString()}
                 </Typography>
               </InfoItem>
               <InfoItem>
                 <Typography variant="body2">
-                  Initiated: {new Date(transaction.initiateDate).toLocaleString()}
+                  Deadline:{" "}
+                  {new Date(
+                    parseInt(transaction.deadline) * 1000
+                  ).toLocaleString()}
                 </Typography>
               </InfoItem>
-              <InfoItem>
-                <Typography variant="body2">
-                  Deadline: {new Date(parseInt(transaction.deadline) * 1000).toLocaleString()}
-                </Typography>
-              </InfoItem>
-              <Button 
-                variant="contained" 
+              <Button
+                variant="contained"
                 color="primary"
-                onClick={() => handleExecute(transaction)}
-                disabled={isLoading || transaction.status !== 'approved'}
+                onClick={() => handleSponsoredTxExecute(transaction)}
+                disabled={isLoading || transaction.status !== "approved"}
               >
                 {isLoading ? "Executing..." : "Execute"}
               </Button>
             </TransactionPaper>
           </Grid>
         ))}
-      </Grid>
+      </Grid> */}
+      <TransactionAccordion
+        transactions={transactions}
+        isSponsorTab={true}
+        handleSponsoredTxExecute={handleSponsoredTxExecute}
+      />
       {transactions.length === 0 && (
-        <Typography variant="body1" style={{ textAlign: 'center', marginTop: '20px' }}>
+        <Typography
+          variant="body1"
+          style={{ textAlign: "center", marginTop: "20px" }}
+        >
           No sponsored transactions found.
         </Typography>
       )}
-      <ToastContainer />
+      {/* <ToastContainer /> */}
     </div>
   );
 };

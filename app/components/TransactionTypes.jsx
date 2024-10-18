@@ -80,12 +80,8 @@ const TransactionTypes = () => {
             activeTab={activeTab}
           />
         );
-        case "sponsored":
-        return (
-          <Sponsored
-           
-          />
-        );
+      case "sponsored":
+        return <Sponsored />;
       default:
         return (
           <Queue
@@ -122,7 +118,7 @@ const TransactionTypes = () => {
               >
                 Queue
               </button>
-             
+
               <button
                 className={`px-4 py-2  text-base font-bold ${
                   activeTab === "history" ? "activeTabBtn" : "inactiveBtn"

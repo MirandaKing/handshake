@@ -20,7 +20,7 @@ import { parseUnits, parseEther } from "viem";
 import { formSchemaLoadToken, formSchemaTransaction } from "./schema";
 import LoadingSpinner from "./LoadingSpinner";
 import { Send } from "lucide-react";
-import permitTokenAbi from "../../quickaccess/PermittokenABI.json"
+import permitTokenAbi from "../../quickaccess/PermittokenABI.json";
 
 const publicClient = createPublicClient({
   chain: {
@@ -76,7 +76,7 @@ const InitiateTransaction = ({ onClose }) => {
   const [transactionDetails, setTransactionDetails] = useState({
     tokenToSend: "BTTC",
     amountToSend: "0",
-    approxGasFees: "0.001",
+    approxGasFees: "700",
     remainingBalance: "0",
     totalCost: "0",
   });
@@ -118,8 +118,8 @@ const InitiateTransaction = ({ onClose }) => {
       formSchemaLoadToken.parse(formData);
       setisLoadingToken(true);
       console.log(transaction.token, address);
-      console.log(await getTokenDetails(transaction.token,address));
-      const getToken = await getTokenDetails(transaction.token,address);
+      console.log(await getTokenDetails(transaction.token, address));
+      const getToken = await getTokenDetails(transaction.token, address);
       console.log(getToken);
       if (getToken !== null) {
         setTokenDetails(getToken);
@@ -162,7 +162,6 @@ const InitiateTransaction = ({ onClose }) => {
     return keccak256(packedData);
   };
 
-
   const getPermitSignature = async (deadline) => {
     if (!isSponsored || !isERC20) return;
 
@@ -180,7 +179,7 @@ const InitiateTransaction = ({ onClose }) => {
     const tokenAddress = transaction.token;
     const spender = process.env.NEXT_PUBLIC_TESTNET_CONTRACT_ADDRESS; // Address of the sponsor contract
     const value = parseUnits(transaction.amount, tokenDetails.decimals);
-   
+
     const contract = getContract({
       address: tokenAddress,
       abi: permitTokenAbi,
@@ -188,47 +187,47 @@ const InitiateTransaction = ({ onClose }) => {
     });
     const nonce = await contract.read.nonces([address]);
     const eip712Domain = await contract.read.eip712Domain();
-    
 
     try {
       const signature = await client.signTypedData({
-        account:address,
-        domain:{
+        account: address,
+        domain: {
           name: eip712Domain[1],
           version: eip712Domain[2],
           chainId: 1029, // BTTC Donau testnet
-          verifyingContract: tokenAddress},
+          verifyingContract: tokenAddress,
+        },
         types: {
-            EIP712Domain: [
-              { name: "name", type: "string" },
-              { name: "version", type: "string" },
-              { name: "chainId", type: "uint256" },
-              { name: "verifyingContract", type: "address" },
-            ],     
+          EIP712Domain: [
+            { name: "name", type: "string" },
+            { name: "version", type: "string" },
+            { name: "chainId", type: "uint256" },
+            { name: "verifyingContract", type: "address" },
+          ],
           Permit: [
-            { name: 'owner', type: 'address' },
-            { name: 'spender', type: 'address' },
-            { name: 'value', type: 'uint256' },
-            { name: 'nonce', type: 'uint256' },
-            { name: 'deadline', type: 'uint256' },
+            { name: "owner", type: "address" },
+            { name: "spender", type: "address" },
+            { name: "value", type: "uint256" },
+            { name: "nonce", type: "uint256" },
+            { name: "deadline", type: "uint256" },
           ],
         },
-        primaryType: 'Permit',
-        message:{ 
+        primaryType: "Permit",
+        message: {
           owner: address,
           spender,
           value,
           nonce,
-          deadline},
+          deadline,
+        },
       });
       return signature;
     } catch (error) {
-      console.error('Error signing permit:', error);
-      toast.error('Failed to sign permit for sponsored transaction');
+      console.error("Error signing permit:", error);
+      toast.error("Failed to sign permit for sponsored transaction");
       return null;
     }
   };
-
 
   const signTransaction = async (e) => {
     e.preventDefault();
@@ -353,10 +352,9 @@ const InitiateTransaction = ({ onClose }) => {
             nonce: nonce,
           },
         });
-        var permitSignature ="NA"
-        if(isSponsored)
-        {
-          permitSignature = await getPermitSignature(deadline);  // added for taking permit signature
+        var permitSignature = "NA";
+        if (isSponsored) {
+          permitSignature = await getPermitSignature(deadline); // added for taking permit signature
         }
       }
 
@@ -379,7 +377,7 @@ const InitiateTransaction = ({ onClose }) => {
           decimals: tokenDetails.symbol !== "" ? tokenDetails.decimals : 18,
           nonce: nonce,
           deadline: deadline.toString(),
-          permitSignature: permitSignature
+          permitSignature: permitSignature,
         };
         console.log(userData);
         try {
@@ -621,15 +619,17 @@ const InitiateTransaction = ({ onClose }) => {
         </div>
 
         <div>
-          {isERC20?(<label className="flex items-center space-x-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={isSponsored}
-              onChange={handleSponsoredChange}
-              className="form-checkbox h-5 w-5 text-gray-600"
-            />
-            <span className="text-gray-700">Sponsored Transaction</span>
-          </label>):null}
+          {isERC20 ? (
+            <label className="flex items-center space-x-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={isSponsored}
+                onChange={handleSponsoredChange}
+                className="form-checkbox h-5 w-5 text-gray-600"
+              />
+              <span className="text-gray-700">Sponsored Transaction</span>
+            </label>
+          ) : null}
         </div>
 
         {isFetchingVideo && (
@@ -668,8 +668,6 @@ const InitiateTransaction = ({ onClose }) => {
             <p>This transaction gas fees will be paid by the Sponsor!</p>
           </div>
         )}
-
-        
 
         <button
           type="submit"

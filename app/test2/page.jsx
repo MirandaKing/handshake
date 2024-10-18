@@ -1,6 +1,6 @@
 import Head from "next/head";
 import React from "react";
-import ExpandableList from "./ExpandableList";
+// import ExpandableList from "./ExpandableList";
 
 function page() {
   return (
@@ -11,7 +11,7 @@ function page() {
       </Head>
       <main>
         <h1>Expandable List</h1>
-        <ExpandableList />
+        {/* <ExpandableList /> */}
       </main>
     </div>
   );
