@@ -16,6 +16,7 @@ import {
   custom,
   formatUnits,
   http,
+  parseSignature,
   parseUnits,
 } from "viem";
 import TimeAgoComponent from "../TimeAgoComponent";
@@ -101,11 +102,7 @@ if (typeof window !== "undefined" && window.ethereum) {
     transport: custom(window.ethereum),
   });
 }
-const TransactionAccordion = ({
-  transactions,
-  isSponsorTab,
-  handleSponsoredTxExecute,
-}) => {
+const TransactionAccordion = ({ transactions, isSponsorTab }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isRejectedBtn, setIsRejectedBtn] = useState(-1);
@@ -287,6 +284,106 @@ const TransactionAccordion = ({
       setIsLoading(false);
     }
   };
+
+  // sponsored transaction
+
+  const handleSponsoredTxExecute = async (transaction) => {
+    setIsLoading(true);
+    try {
+      const publicClient = createPublicClient({
+        chain: {
+          id: 1029,
+          rpcUrls: {
+            public: "https://pre-rpc.bittorrentchain.io/",
+          },
+        },
+        transport: http("https://pre-rpc.bittorrentchain.io/"),
+      });
+
+      const permitsignaturs = transaction.permitSignature;
+      const { v, r, s } = parseSignature(permitsignaturs);
+      const TransactionDetails = [
+        transaction.senderAddress,
+        transaction.receiverAddress,
+        transaction.tokenAddress,
+        transaction.amount,
+        transaction.deadline,
+        transaction.nonce,
+      ];
+
+      const args = [
+        transaction.senderSignature,
+        transaction.receiverSignature,
+        transaction.deadline,
+        TransactionDetails,
+        v,
+        r,
+        s,
+      ];
+
+      const { request } = await publicClient.simulateContract({
+        account: address,
+        address: `${process.env.NEXT_PUBLIC_TESTNET_CONTRACT_ADDRESS}`,
+        abi: handshakeABI.abi,
+        functionName: "transferFromWithPermit",
+        args,
+        gasLimit: 3000000,
+      });
+
+      let walletClient;
+      if (typeof window !== "undefined" && window.ethereum) {
+        walletClient = createWalletClient({
+          chain: {
+            id: 1029,
+            rpcUrls: {
+              public: "https://pre-rpc.bittorrentchain.io/",
+              websocket: "https://pre-rpc.bittorrentchain.io/",
+            },
+          },
+          transport: custom(window.ethereum),
+        });
+      }
+
+      const execute = await walletClient.writeContract(request);
+      if (execute) {
+        await publicClient.waitForTransactionReceipt({ hash: execute });
+      } else {
+        console.log("transaction hash is undefined");
+      }
+
+      if (execute) {
+        const userData = {
+          TransactionId: transaction.TransactionId,
+          status: "completed",
+          transectionDate: new Date().toISOString(),
+          transactionHash: execute,
+        };
+
+        try {
+          let result = await fetch(`/api/payment-completed`, {
+            method: "PUT",
+            body: JSON.stringify(userData),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+          const response = await result.json();
+          console.log("Payment update response: ", response);
+        } catch (error) {
+          console.error("Error updating payment status:", error);
+        }
+
+        toast.success("Transaction executed successfully");
+      }
+    } catch (error) {
+      console.error("Error executing transaction:", error);
+      toast.error("Failed to execute transaction");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  //normal transaction execution
   const executeTransaction = async (transaction) => {
     setIsLoading(true);
 
